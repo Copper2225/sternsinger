@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 
 const App: React.FC = () => {
     const [districtValues, setDistrictValues] = useState<number[]>([]);
-    const backendURL = 'https://reacttest-production-8896.up.railway.app';
+    const backendURL = import.meta.env.VITE_BACKEND_URL; // Get the backend URL from env variable
+
+    console.log(backendURL);
 
     useEffect(() => {
         // Fetch district values
@@ -13,7 +15,7 @@ const App: React.FC = () => {
             .catch((error) => console.error('Error fetching districts:', error));
 
         // WebSocket connection
-        const ws = new WebSocket(`wss://reacttest-production-8896.up.railway.app`);
+        const ws = new WebSocket(`${backendURL.replace(/^http/, 'ws')}`);
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
             if (message.type === 'districtUpdate') {

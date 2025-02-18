@@ -7,12 +7,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "baseUrl": "./src",
     "paths": {
-      "@frontend/*": ["frontend/src/*"]
+      "@assets/*": ["assets/*"]
     }
   },
-  "include": ["frontend/src", "backend/**/*", "eslint.config.js"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules"]
 }

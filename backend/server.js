@@ -1,3 +1,4 @@
+require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const cors = require('cors');
 const { WebSocketServer } = require('ws');
@@ -9,9 +10,14 @@ app.use(express.json());
 let districtValues = []; // Store district values
 let log = []; // Log of actions
 
-const PORT = 3000;
+// Use the environment variable or default to 3000 if not set
+const PORT = process.env.PORT || 3000;
+
+// Use the backend URL from the environment variables (default to local URL)
+const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${PORT}`;
+
 const server = app.listen(PORT, () => {
-    console.log(`API server running at http://localhost:${PORT}`);
+    console.log(`API server running at ${BACKEND_URL}`);
 });
 
 // WebSocket server

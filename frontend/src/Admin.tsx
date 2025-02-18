@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { dorfBezirkeState } from '../src/adminStore';
+import { dorfBezirkeState } from 'frontend/src/adminStore';
 
 const Admin: React.FC = () => {
     const [dorfBezirke] = useRecoilState(dorfBezirkeState); // Number of districts
     const [values, setValues] = useState<number[]>([]); // District values
-    const backendURL = 'https://reacttest-production-8896.up.railway.app';
+    const backendURL = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
         // Fetch initial district values
