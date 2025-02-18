@@ -3,16 +3,17 @@ import { Link } from 'react-router-dom';
 
 const App: React.FC = () => {
     const [districtValues, setDistrictValues] = useState<number[]>([]);
+    const backendURL = 'https://reacttest-production-8896.up.railway.app';
 
     useEffect(() => {
         // Fetch district values
-        fetch('http://localhost:3000/districts')
+        fetch(`${backendURL}/districts`)
             .then((response) => response.json())
             .then((data) => setDistrictValues(data || []))
             .catch((error) => console.error('Error fetching districts:', error));
 
         // WebSocket connection
-        const ws = new WebSocket('ws://localhost:3000');
+        const ws = new WebSocket(`wss://reacttest-production-8896.up.railway.app`);
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
             if (message.type === 'districtUpdate') {

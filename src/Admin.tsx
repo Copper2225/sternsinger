@@ -5,17 +5,18 @@ import { dorfBezirkeState } from '../src/adminStore';
 const Admin: React.FC = () => {
     const [dorfBezirke] = useRecoilState(dorfBezirkeState); // Number of districts
     const [values, setValues] = useState<number[]>([]); // District values
+    const backendURL = 'https://reacttest-production-8896.up.railway.app';
 
     useEffect(() => {
         // Fetch initial district values
-        fetch('http://localhost:3000/districts')
+        fetch(`${backendURL}/districts`)
             .then((response) => response.json())
             .then((data) => setValues(data || []))
             .catch((error) => console.error('Error fetching districts:', error));
     }, []);
 
     const handleSubmit = (value: number, index: number) => {
-        fetch('http://localhost:3000/districts', {
+        fetch(`${backendURL}/districts`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ index, value }),
