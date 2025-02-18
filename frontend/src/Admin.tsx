@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { dorfBezirkeState } from 'frontend/src/adminStore';
+import { dorfBezirkeState } from 'adminStore';
 
 const Admin: React.FC = () => {
     const [dorfBezirke] = useRecoilState(dorfBezirkeState); // Number of districts

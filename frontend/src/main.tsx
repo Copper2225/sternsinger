@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import App from 'frontend/src/App';
-import Admin from 'frontend/src/Admin';
+import App from 'App';
+import Admin from 'Admin';
 import {RecoilRoot} from "recoil";
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
