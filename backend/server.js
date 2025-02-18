@@ -14,10 +14,10 @@ let log = []; // Log of actions
 const PORT = process.env.PORT || 3000;
 
 // Use the backend URL from the environment variables (default to local URL)
-const BACKEND_URL = process.env.BACKEND_URL || `http://localhost:${PORT}`;
+const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL || `http://localhost:${PORT}`;
 
 const server = app.listen(PORT, () => {
-    console.log(`API server running at ${BACKEND_URL}`);
+    console.log(`API server running at ${BACKEND_SERVER_URL}`);
 });
 
 // WebSocket server
