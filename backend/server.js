@@ -45,12 +45,12 @@ wss.on('connection', (ws) => {
 });
 
 // Endpoint to get all district values
-app.get('/districts', (req, res) => {
+app.get('/api/districts', (req, res) => {
     res.json(districtValues);
 });
 
 // Endpoint to update a specific district's value
-app.post('/districts', (req, res) => {
+app.post('/api/districts', (req, res) => {
     const { index, value } = req.body;
 
     if (typeof index !== 'number' || typeof value !== 'number') {
@@ -71,6 +71,6 @@ app.post('/districts', (req, res) => {
 });
 
 // Endpoint to get the log
-app.get('/log', (req, res) => {
+app.get('/api/log', (req, res) => {
     res.json(log);
 });
