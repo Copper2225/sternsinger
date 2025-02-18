@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "host": "vite --host"
+    "host": "vite --host",
+    "start": "serve -s dist -l 5173"
   },
   "dependencies": {
     "react": "^18.3.1",
