@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "host": "vite --host",
-    "start": "vite preview"
+    "start": "serve -s dist -l 4173"
   },
   "dependencies": {
     "react": "^18.3.1",
