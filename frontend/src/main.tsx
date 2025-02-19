@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {RecoilRoot} from "recoil";
 import App from "@/View/Show/App";
 import Admin from "@/View/Admin/Admin";
+
+import "bootstrap/dist/css/bootstrap.min.css";
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

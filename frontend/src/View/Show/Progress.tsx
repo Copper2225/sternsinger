@@ -1,6 +1,7 @@
 import React, {useMemo} from "react";
 import {District} from "@/requests/adminStore";
 import ProgressDistrict from "@/View/Show/ProgressDistrict";
+import {ProgressBar} from "react-bootstrap";
 
 interface Props {
     values: number[],
@@ -57,7 +58,7 @@ const Progress = ({values, districts}: Props): React.ReactElement => {
                 <ProgressDistrict title={"Bauernschaft"} value={bauernschaften.value} total={bauernschaften.total} />
                 <ProgressDistrict title={"Dorf"} value={dorf.value} total={dorf.total} />
             </div>
-            <progress max={total.total} value={total.value} />
+            <ProgressBar now={24} max={100}/>
         </div>
     );
 }

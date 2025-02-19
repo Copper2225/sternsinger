@@ -36,13 +36,13 @@ const App: React.FC = () => {
         };
     }, []);
 
-    useEffect(() => {
-        const intervall = setInterval(() => {
-            setViewIndex((prevState) => (prevState + 1) % 2)
-        }, 10000);
-
-        return () => clearInterval(intervall);
-    }, []);
+    // useEffect(() => {
+    //     const intervall = setInterval(() => {
+    //         setViewIndex((prevState) => (prevState + 1) % 2)
+    //     }, 10000);
+    //
+    //     return () => clearInterval(intervall);
+    // }, []);
 
     return (
         <div>
