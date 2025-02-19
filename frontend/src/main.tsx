@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import App from './App';
-import Admin from './Admin';
 import {RecoilRoot} from "recoil";
+import App from "@/View/Show/App";
+import Admin from "@/View/Admin/Admin";
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
