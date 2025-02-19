@@ -1,10 +1,15 @@
-import React from "react";
+import React, {useMemo} from "react";
 
 interface Props {
-    total: string
+    values: number[]
 }
 
-const DonationSum = ({total}: Props): React.ReactElement => {
+const DonationSum = ({values}: Props): React.ReactElement => {
+    const total = useMemo(() => values.reduce((sum, value) => sum + value, 0).toLocaleString('de', {
+        style: "currency",
+        currency: 'EUR'
+    }), [values]);
+
     return (
         <div style={{display: "flex", flexDirection: 'column', justifyContent: "center", alignItems: "center", height: "100vh"}}>
             <span style={{fontSize: "4em"}} >Aktueller Spendenstand:</span>

@@ -33,10 +33,10 @@ const DistrictLine = ({ name, value, handleSubmit, index }: Props): React.ReactE
 
     return (
         <tr style={{ height: "10px" }}>
-            <td style={{ padding: "10px" }}>
+            <td style={{ padding: "10px 10px 10px 0" }}>
                 <label style={{fontSize: "larger"}}>{name}:</label>
             </td>
-            <td style={{ padding: "10px", width: "60%" }}>
+            <td style={{ padding: "10px", width: "50%" }}>
                 <input
                     type="number"
                     value={inputValue}

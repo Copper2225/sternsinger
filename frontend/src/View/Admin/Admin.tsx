@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import {bauernschaftenState, District, districtsState, dorfBezirkeState} from "@/adminStore";
+import {bauernschaftenState, districtsState, dorfBezirkeState} from "@/requests/adminStore";
 import DistrictLine from "@/View/Admin/DistrictLine";
+import {useLoadDistricts} from "@/requests/useLoadDistricts";
 
 const Admin: React.FC = () => {
-    const [dorfBezirke] = useRecoilState(dorfBezirkeState);
-    const [bauernschaften] = useRecoilState(bauernschaftenState);
+    const loadDistricts = useLoadDistricts();
     const [districts, setDistricts] = useRecoilState(districtsState);
     const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -24,20 +24,8 @@ const Admin: React.FC = () => {
     }, [backendURL]);
 
     useEffect(() => {
-        const newDistricts = Array.from({ length: dorfBezirke }, (_, index) => ({
-            name: `Bezirk ${index + 1}`,
-            counting: true,
-        }));
-
-        const newDistricts2 = bauernschaften.flatMap((b) => {
-            return Array.from({ length: b.amount }, (_, index) => ({
-                name: `${b.name}${b.amount > 1 ? ` ${index + 1}` : ""}`,
-                counting: true,
-            }));
-        });
-
-        setDistricts([...newDistricts, ...newDistricts2]);
-    }, [dorfBezirke, bauernschaften]);
+        setDistricts(loadDistricts);
+    }, []);
 
     const handleSubmit = useCallback((value: number, index: number) => {
         fetch(`${backendURL}/districts`, {
@@ -58,9 +46,9 @@ const Admin: React.FC = () => {
 
 
     return (
-        <div>
+        <div style={{paddingLeft: 30}}>
             <h1>Admin Page</h1>
-            <table style={{maxWidth: "40%", marginTop: "20px"}}>
+            <table style={{marginTop: "20px"}}>
                 <tbody>
                 {districts.map((district, index) => (
                     <DistrictLine key={index} name={district.name} value={district.money ?? ''}

@@ -49,6 +49,13 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+progress {
+  accent-color: #F4C242;
+  width: 86vw;
+  height: 60px;
+  margin-block: 50px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #000000;
