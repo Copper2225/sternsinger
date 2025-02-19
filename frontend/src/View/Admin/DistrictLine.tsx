@@ -5,7 +5,7 @@ import {faCheck, faCross, faXmark} from "@fortawesome/free-solid-svg-icons";
 interface Props {
     name: string;
     value: number | '';
-    handleSubmit: (value: number, index: number) => void;
+    handleSubmit: (value: number | '', index: number) => void;
     index: number;
 }
 
@@ -17,7 +17,7 @@ const DistrictLine = ({ name, value, handleSubmit, index }: Props): React.ReactE
     }, [value]);
 
     const handleSave = useCallback(() => {
-        handleSubmit(inputValue === '' ? 0 : inputValue, index);
+        handleSubmit(inputValue, index);
     }, [inputValue]);
 
     const handleCancel = useCallback(() => {
@@ -36,7 +36,7 @@ const DistrictLine = ({ name, value, handleSubmit, index }: Props): React.ReactE
             <td style={{ padding: "10px 10px 10px 0" }}>
                 <label style={{fontSize: "larger"}}>{name}:</label>
             </td>
-            <td style={{ padding: "10px", width: "50%" }}>
+            <td style={{ padding: "10px", maxWidth: "60%" }}>
                 <input
                     type="number"
                     value={inputValue}
@@ -47,9 +47,9 @@ const DistrictLine = ({ name, value, handleSubmit, index }: Props): React.ReactE
             </td>
             <td style={{padding: "10px", width: 30}}>
                 {inputValue !== value &&
-                    <div style={{display: "flex", gap: 4}}>
-                        <FontAwesomeIcon icon={faCheck} onClick={handleSave} />
-                        <FontAwesomeIcon icon={faXmark} onClick={handleCancel} />
+                    <div style={{display: "flex", gap: 8}}>
+                        <FontAwesomeIcon size={"xl"} className={'text-success'} icon={faCheck} onClick={handleSave} />
+                        <FontAwesomeIcon size={"xl"} className={"text-danger"} icon={faXmark} onClick={handleCancel} />
                     </div>
                 }
             </td>

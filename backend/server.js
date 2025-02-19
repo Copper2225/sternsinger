@@ -50,10 +50,10 @@ app.get('/api/districts', (req, res) => {
 });
 
 // Endpoint to update a specific district's value
-app.post('/api/districts', (req, res) => {
+app.post('/api/district', (req, res) => {
     const { index, value } = req.body;
 
-    if (typeof index !== 'number' || typeof value !== 'number') {
+    if (typeof index !== 'number' || (typeof value !== 'number' && value !== null)  ) {
         return res.status(400).json({ error: 'Invalid index or value' });
     }
 
@@ -63,6 +63,22 @@ app.post('/api/districts', (req, res) => {
     // Log the action
     const timestamp = new Date().toISOString();
     log.push({ timestamp, action: `District ${index + 1} updated`, value });
+
+    // Broadcast the updated district values
+    broadcast({ type: 'districtUpdate', districtValues });
+
+    res.json({ success: true, districtValues });
+});
+
+app.post('/api/districts', (req, res) => {
+    const { value } = req.body;
+
+    // Update or add the value for the specified district
+    districtValues = value;
+
+    // Log the action
+    const timestamp = new Date().toISOString();
+    log.push({ timestamp, action: `Districts updated`, value });
 
     // Broadcast the updated district values
     broadcast({ type: 'districtUpdate', districtValues });

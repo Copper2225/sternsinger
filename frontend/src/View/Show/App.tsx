@@ -11,7 +11,7 @@ const App: React.FC = () => {
     const [districts, setDistricts] = useRecoilState(districtsState);
     const loadDistricts = useLoadDistricts();
     const backendURL = import.meta.env.VITE_BACKEND_URL; // Get the backend URL from env variable
-    const [viewIndex, setViewIndex] = useState<number>(1);
+    const [viewIndex, setViewIndex] = useState<number>(0);
 
     useEffect(() => {
         // Fetch district values
@@ -36,13 +36,13 @@ const App: React.FC = () => {
         };
     }, []);
 
-    // useEffect(() => {
-    //     const intervall = setInterval(() => {
-    //         setViewIndex((prevState) => (prevState + 1) % 2)
-    //     }, 10000);
-    //
-    //     return () => clearInterval(intervall);
-    // }, []);
+    useEffect(() => {
+        const intervall = setInterval(() => {
+            setViewIndex((prevState) => (prevState + 1) % 2)
+        }, 10000);
+
+        return () => clearInterval(intervall);
+    }, []);
 
     return (
         <div>

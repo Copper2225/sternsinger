@@ -1,10 +1,11 @@
-import {bauernschaftenState, District, dorfBezirkeState} from "@/requests/adminStore";
+import {bauernschaftenState, District, dorfBezirkeState, otherDistrictsState} from "@/requests/adminStore";
 import {useRecoilValue} from "recoil";
 import {useCallback} from "react";
 
 export const useLoadDistricts = (): (() => District[]) => {
     const dorfBezirke = useRecoilValue(dorfBezirkeState);
     const bauernschaften = useRecoilValue(bauernschaftenState);
+    const others = useRecoilValue(otherDistrictsState);
 
     return useCallback(
         () => {
@@ -17,9 +18,10 @@ export const useLoadDistricts = (): (() => District[]) => {
                 return Array.from({ length: b.amount }, (_, index) => ({
                     name: `${b.name}${b.amount > 1 ? ` ${index + 1}` : ""}`,
                     counting: true,
+                    bauernschaft: true
                 }));
             });
-            return ([...newDistricts, ...newDistricts2]);
-        }, [bauernschaften, dorfBezirke]
+            return ([...newDistricts, ...newDistricts2, ...others]);
+        }, [bauernschaften, dorfBezirke, others]
     )
 }

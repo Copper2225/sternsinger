@@ -26,20 +26,20 @@ const Progress = ({values, districts}: Props): React.ReactElement => {
 
     const bauernschaften = useMemo<Part>(() => {
         const value = districts.reduce(
-            (sum, value, index) => values[index] > 0 && value.counting && !value.name.includes("Bezirk") ? sum + 1 : sum, 0
+            (sum, value, index) => values[index] > 0 && value.counting && value.bauernschaft == true ? sum + 1 : sum, 0
         );
         const total = districts.reduce(
-            (sum, value, index) => value.counting && !value.name.includes("Bezirk") ? sum + 1 : sum, 0
+            (sum, value, index) => value.counting && value.bauernschaft == true ? sum + 1 : sum, 0
         );
         return { value, total };
     }, [values, districts]);
 
     const dorf = useMemo<Part>(() => {
         const value = districts.reduce(
-            (sum, value, index) => values[index] > 0 && value.counting && value.name.includes("Bezirk") ? sum + 1 : sum, 0
+            (sum, value, index) => values[index] > 0 && value.counting && value.bauernschaft != true ? sum + 1 : sum, 0
         );
         const total = districts.reduce(
-            (sum, value, index) => value.counting && value.name.includes("Bezirk") ? sum + 1 : sum, 0
+            (sum, value, index) => value.counting && value.bauernschaft != true ? sum + 1 : sum, 0
         );
         return { value, total };
     }, [values, districts]);
@@ -55,10 +55,10 @@ const Progress = ({values, districts}: Props): React.ReactElement => {
             <span style={{fontSize: "4em", marginBottom: 30}}>Aktueller Fortschritt:</span>
             <div style={{display: "flex", justifyContent: "space-between", width: "80vW"}}>
                 <ProgressDistrict title={"Gesamt"} value={total.value} total={total.total} />
-                <ProgressDistrict title={"Bauernschaft"} value={bauernschaften.value} total={bauernschaften.total} />
+                <ProgressDistrict title={"Bauernschaften"} value={bauernschaften.value} total={bauernschaften.total} />
                 <ProgressDistrict title={"Dorf"} value={dorf.value} total={dorf.total} />
             </div>
-            <ProgressBar now={24} max={100}/>
+            <ProgressBar now={total.value} max={total.total}/>
         </div>
     );
 }
