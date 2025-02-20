@@ -15,25 +15,20 @@ const Admin: React.FC = () => {
         fetch(`${backendURL}/districts`)
             .then((response) => response.json())
             .then((data) => {
-                setDistricts((prevDistricts) => {
-                    return prevDistricts.map((district, index) => ({
-                        ...district,
-                        money: data[index]
-                    }));
-                });
+                if (data == null) {
+                    handleOverwrite(loadDistricts());
+                } else {
+                    setDistricts(data);
+                }
             })
             .catch((error) => console.error('Error fetching districts:', error));
     }, [backendURL]);
 
-    useEffect(() => {
-        setDistricts(loadDistricts);
-    }, []);
-
-    const handleSubmit = useCallback((newVal: number | '', index: number) => {
+    const handleSubmit = useCallback((value: District, index: number) => {
         fetch(`${backendURL}/district`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ index, value: newVal == '' ? null : newVal }),
+            body: JSON.stringify({ index, value }),
         })
             .then((response) => response.json())
             .then((data) => console.log(`Updated district ${index + 1}`, data))
@@ -41,17 +36,16 @@ const Admin: React.FC = () => {
 
         setDistricts((prevValues) => {
             const newValues = [...prevValues];
-            newValues[index] = { ...newValues[index], money: newVal == '' ? undefined : newVal };
+            newValues[index] = value;
             return newValues;
         });
     }, []);
 
     const handleOverwrite = useCallback((values: any) => {
-        const vals = values.map((b: District) => b.money);
         fetch(`${backendURL}/districts`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ value: vals }),
+            body: JSON.stringify({ value: values }),
         })
             .then((response) => response.json())
             .then((data) => console.log(`Updated districts`, data))
@@ -69,8 +63,7 @@ const Admin: React.FC = () => {
             <table style={{marginTop: "20px"}}>
                 <tbody>
                 {districts.map((district, index) => (
-                    <DistrictLine key={index} name={district.name} value={district.money ?? ''}
-                                  handleSubmit={handleSubmit} index={index}/>
+                    <DistrictLine key={index} district={district} handleSubmit={handleSubmit} index={index}/>
                 ))}
                 </tbody>
             </table>

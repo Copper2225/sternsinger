@@ -7,23 +7,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-let districtValues = []; // Store district values
-let log = []; // Log of actions
+let districtValues = [];
+let log = [];
 
 // Use the environment variable or default to 3000 if not set
 const PORT = process.env.PORT || 3000;
 
-// Use the backend URL from the environment variables (default to local URL)
 const BACKEND_SERVER_URL = process.env.BACKEND_SERVER_URL || `http://localhost:${PORT}`;
 
 const server = app.listen(PORT, () => {
     console.log(`API server running at ${BACKEND_SERVER_URL}`);
 });
 
-// WebSocket server
 const wss = new WebSocketServer({ server });
 
-// Broadcast a message to all clients
 const broadcast = (message) => {
     wss.clients.forEach((client) => {
         if (client.readyState === client.OPEN) {
@@ -46,14 +43,18 @@ wss.on('connection', (ws) => {
 
 // Endpoint to get all district values
 app.get('/api/districts', (req, res) => {
-    res.json(districtValues);
+    if (districtValues.length === 0) {
+        res.json(null);
+    } else {
+        res.json(districtValues);
+    }
 });
 
 // Endpoint to update a specific district's value
 app.post('/api/district', (req, res) => {
     const { index, value } = req.body;
 
-    if (typeof index !== 'number' || (typeof value !== 'number' && value !== null)  ) {
+    if (typeof index !== 'number') {
         return res.status(400).json({ error: 'Invalid index or value' });
     }
 
@@ -62,7 +63,7 @@ app.post('/api/district', (req, res) => {
 
     // Log the action
     const timestamp = new Date().toISOString();
-    log.push({ timestamp, action: `District ${index + 1} updated`, value });
+    log.push({ timestamp, action: `District ${value.name} updated`, value });
 
     // Broadcast the updated district values
     broadcast({ type: 'districtUpdate', districtValues });

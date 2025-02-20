@@ -1,10 +1,9 @@
-import React, {useMemo} from "react";
+import React, {useCallback, useMemo} from "react";
 import {District} from "@/requests/adminStore";
 import ProgressDistrict from "@/View/Show/ProgressDistrict";
 import {ProgressBar} from "react-bootstrap";
 
 interface Props {
-    values: number[],
     districts: District[]
 }
 
@@ -13,36 +12,18 @@ interface Part {
     total: number
 }
 
-const Progress = ({values, districts}: Props): React.ReactElement => {
-    const total = useMemo<Part>(() => {
-        const value = districts.reduce(
-            (sum, value, index) => values[index] > 0 && value.counting ? sum + 1 : sum, 0
-        );
-        const total = districts.reduce(
-            (sum, value, index) => value.counting ? sum + 1 : sum, 0
-        );
-        return { value, total };
-    }, [values, districts]);
+const Progress = ({districts}: Props): React.ReactElement => {
+    const calculateProgress = useCallback((filterFn: (district: District) => boolean): Part => {
+        const filteredDistricts = districts.filter(filterFn);
+        return {
+            value: filteredDistricts.filter(d => (d.money ?? 0) > 0).length,
+            total: filteredDistricts.length,
+        };
+    }, [districts]);
 
-    const bauernschaften = useMemo<Part>(() => {
-        const value = districts.reduce(
-            (sum, value, index) => values[index] > 0 && value.counting && value.bauernschaft == true ? sum + 1 : sum, 0
-        );
-        const total = districts.reduce(
-            (sum, value, index) => value.counting && value.bauernschaft == true ? sum + 1 : sum, 0
-        );
-        return { value, total };
-    }, [values, districts]);
-
-    const dorf = useMemo<Part>(() => {
-        const value = districts.reduce(
-            (sum, value, index) => values[index] > 0 && value.counting && value.bauernschaft != true ? sum + 1 : sum, 0
-        );
-        const total = districts.reduce(
-            (sum, value, index) => value.counting && value.bauernschaft != true ? sum + 1 : sum, 0
-        );
-        return { value, total };
-    }, [values, districts]);
+    const total = useMemo(() => calculateProgress(d => d.counting), [districts]);
+    const bauernschaften = useMemo(() => calculateProgress(d => d.counting && d.bauernschaft == true), [districts]);
+    const dorf = useMemo(() => calculateProgress(d => d.counting && !d.bauernschaft), [districts]);
 
     return (
         <div style={{

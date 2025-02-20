@@ -1,27 +1,27 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faCross, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {faCheck, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {District} from "@/requests/adminStore";
 
 interface Props {
-    name: string;
-    value: number | '';
-    handleSubmit: (value: number | '', index: number) => void;
+    district: District;
+    handleSubmit: (value: District, index: number) => void;
     index: number;
 }
 
-const DistrictLine = ({ name, value, handleSubmit, index }: Props): React.ReactElement => {
-    const [inputValue, setInputValue] = useState<number | ''>(value);
+const DistrictLine = ({ district, handleSubmit, index }: Props): React.ReactElement => {
+    const [inputValue, setInputValue] = useState<number | ''>(district.money ?? '');
 
     useEffect(() => {
-        setInputValue(value)
-    }, [value]);
+        setInputValue(district.money ?? '')
+    }, [district]);
 
     const handleSave = useCallback(() => {
-        handleSubmit(inputValue, index);
+        handleSubmit({...district, money: inputValue != '' ? inputValue : undefined}, index);
     }, [inputValue]);
 
     const handleCancel = useCallback(() => {
-        setInputValue(value);
+        setInputValue(district.money ?? '');
     }, []);
 
     const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -34,9 +34,9 @@ const DistrictLine = ({ name, value, handleSubmit, index }: Props): React.ReactE
     return (
         <tr style={{ height: "10px" }}>
             <td style={{ padding: "10px 10px 10px 0" }}>
-                <label style={{fontSize: "larger"}}>{name}:</label>
+                <label style={{fontSize: "larger"}}>{district.name}:</label>
             </td>
-            <td style={{ padding: "10px", maxWidth: "60%" }}>
+            <td style={{ padding: "10px", width: "200px" }}>
                 <input
                     type="number"
                     value={inputValue}
@@ -45,8 +45,8 @@ const DistrictLine = ({ name, value, handleSubmit, index }: Props): React.ReactE
                     onKeyDown={handleKeyDown}
                 />
             </td>
-            <td style={{padding: "10px", width: 30}}>
-                {inputValue !== value &&
+            <td style={{padding: "10px"}}>
+                {inputValue !== (district.money ?? '') &&
                     <div style={{display: "flex", gap: 8}}>
                         <FontAwesomeIcon size={"xl"} className={'text-success'} icon={faCheck} onClick={handleSave} />
                         <FontAwesomeIcon size={"xl"} className={"text-danger"} icon={faXmark} onClick={handleCancel} />

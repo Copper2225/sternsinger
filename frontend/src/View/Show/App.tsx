@@ -7,7 +7,6 @@ import {useLoadDistricts} from "@/requests/useLoadDistricts";
 import Progress from "@/View/Show/Progress";
 
 const App: React.FC = () => {
-    const [districtValues, setDistrictValues] = useState<number[]>([]);
     const [districts, setDistricts] = useRecoilState(districtsState);
     const loadDistricts = useLoadDistricts();
     const backendURL = import.meta.env.VITE_BACKEND_URL; // Get the backend URL from env variable
@@ -17,7 +16,7 @@ const App: React.FC = () => {
         // Fetch district values
         fetch(`${backendURL}/districts`)
             .then((response) => response.json())
-            .then((data) => setDistrictValues(data || []))
+            .then((data) => setDistricts(data || []))
             .catch((error) => console.error('Error fetching districts:', error));
 
         setDistricts(loadDistricts);
@@ -27,7 +26,7 @@ const App: React.FC = () => {
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
             if (message.type === 'districtUpdate') {
-                setDistrictValues(message.districtValues);
+                setDistricts(message.districtValues);
             }
         };
 
@@ -47,8 +46,8 @@ const App: React.FC = () => {
     return (
         <div>
             {
-                viewIndex === 0 ? <DonationSum values={districtValues}/> :
-                viewIndex === 1 ? <Progress values={districtValues} districts={districts}/> :
+                viewIndex === 0 ? <DonationSum values={districts.map((e) => e.money ?? 0)}/> :
+                viewIndex === 1 ? <Progress districts={districts}/> :
                 null
             }
             <a href="/admin">
