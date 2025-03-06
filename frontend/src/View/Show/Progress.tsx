@@ -53,7 +53,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
                 style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    width: "80vW",
+                    width: "90vW",
                 }}
             >
                 <ProgressDistrict
