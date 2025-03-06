@@ -13,6 +13,7 @@
     "start": "concurrently \"npm run start -w frontend\" \"npm run start -w backend\""
   },
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "typescript-eslint": "^8.26.0"
   }
 }

@@ -1,14 +1,18 @@
-require('dotenv').config(); // Load environment variables from .env file
-const express = require('express');
-const cors = require('cors');
-const { WebSocketServer } = require('ws');
+import {config} from "dotenv";
+import express from "express";
+import cors from "cors";
+
+import {WebSocketServer} from "ws";
+
+config();
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 let districtValues = [];
-let log = [];
+const log = [];
 
 // Use the environment variable or default to 3000 if not set
 const PORT = process.env.PORT || 3000;
@@ -42,7 +46,7 @@ wss.on('connection', (ws) => {
 });
 
 // Endpoint to get all district values
-app.get('/api/districts', (req, res) => {
+app.get('/districts', (req, res) => {
     if (districtValues.length === 0) {
         res.json(null);
     } else {
@@ -51,7 +55,7 @@ app.get('/api/districts', (req, res) => {
 });
 
 // Endpoint to update a specific district's value
-app.post('/api/district', (req, res) => {
+app.post('/district', (req, res) => {
     const { index, value } = req.body;
 
     if (typeof index !== 'number') {
@@ -71,7 +75,7 @@ app.post('/api/district', (req, res) => {
     res.json({ success: true, districtValues });
 });
 
-app.post('/api/districts', (req, res) => {
+app.post('/districts', (req, res) => {
     const { value } = req.body;
 
     // Update or add the value for the specified district
