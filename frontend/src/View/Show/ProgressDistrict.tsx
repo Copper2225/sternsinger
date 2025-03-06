@@ -19,8 +19,8 @@ const ProgressDistrict = ({
                 alignItems: "center",
             }}
         >
-            <span style={{ fontSize: "3em" }}>{title}</span>
-            <span style={{ fontSize: "10em" }}>
+            <span className={"progress-name"}>{title}</span>
+            <span className={"progress-numbers"}>
                 {value} / {total}
             </span>
         </div>

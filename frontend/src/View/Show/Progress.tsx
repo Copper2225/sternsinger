@@ -48,9 +48,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
                 height: "100vh",
             }}
         >
-            <span style={{ fontSize: "4em", marginBottom: 30 }}>
-                Aktueller Fortschritt:
-            </span>
+            <span className={"progress-title"}>Aktueller Fortschritt:</span>
             <div
                 style={{
                     display: "flex",

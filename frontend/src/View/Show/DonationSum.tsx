@@ -26,8 +26,8 @@ const DonationSum = ({ values }: Props): React.ReactElement => {
                 height: "100vh",
             }}
         >
-            <span style={{ fontSize: "4em" }}>Aktueller Spendenstand:</span>
-            <span style={{ fontSize: "18em" }}>{total}</span>
+            <span className={"donation-title"}>Aktueller Spendenstand:</span>
+            <span className={"donation-sum"}>{total}</span>
         </div>
     );
 };

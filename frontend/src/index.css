@@ -58,3 +58,24 @@ button:focus-visible {
     margin-bottom: 150px;
     border-radius: 3rem;
 }
+
+.progress-title {
+    font-size: 4em;
+    margin-bottom: 30px
+}
+
+.progress-name {
+    font-size: 3em;
+}
+
+.progress-numbers {
+    font-size: 10em;
+}
+
+.donation-sum {
+    font-size: 18em;
+}
+
+.donation-title {
+    font-size: 4em;
+}
