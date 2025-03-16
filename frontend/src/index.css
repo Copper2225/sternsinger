@@ -51,6 +51,14 @@ button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
 .progress {
     --bs-progress-bar-bg: #f4c242;
     width: 86vw;
@@ -78,4 +86,107 @@ button:focus-visible {
 
 .donation-title {
     font-size: 4em;
+}
+
+/* Mobile styles */
+@media screen and (max-width: 768px) {
+    .page-wrapper {
+        justify-content: flex-start;
+        padding-top: 2rem;
+    }
+
+    .progress {
+        width: 92vw;
+        height: 30px;
+        margin-bottom: 80px;
+    }
+
+    img {
+        max-width: 92vw;
+        height: auto;
+    }
+
+    .progress-title {
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    .progress-name {
+        font-size: 1.5em;
+    }
+
+    .progress-numbers {
+        font-size: 4em;
+    }
+
+    .donation-sum {
+        font-size: 6em;
+    }
+
+    .donation-title {
+        font-size: 2em;
+    }
+}
+
+/* Small mobile devices */
+@media screen and (max-width: 480px) {
+    .progress {
+        margin-bottom: 60px;
+    }
+
+    .progress-numbers {
+        font-size: 3em;
+    }
+
+    .donation-sum {
+        font-size: 4.5em;
+    }
+
+    .donation-title {
+        font-size: 2em;
+    }
+}
+
+/* Landscape mobile styles */
+@media screen and (orientation: landscape) and (max-height: 768px) {
+    .page-wrapper {
+        justify-content: flex-start;
+        padding-top: 2rem;
+    }
+
+    img {
+        max-width: 40vw;
+        height: auto;
+    }
+
+    .progress {
+        width: 92vw;
+        height: 30px;
+        margin-bottom: 40px;
+    }
+
+    .progress-title {
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    .progress-name {
+        font-size: 1.5em;
+    }
+
+    .progress-numbers {
+        font-size: 4em;
+    }
+
+    .donation-sum {
+        font-size: 7em;
+    }
+
+    .donation-wrapper {
+        margin-top: 5vh;
+    }
+
+    .donation-title {
+        font-size: 3em;
+    }
 }
