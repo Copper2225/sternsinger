@@ -56,7 +56,7 @@ button:focus-visible {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .progress {
@@ -93,6 +93,8 @@ button:focus-visible {
     .page-wrapper {
         justify-content: flex-start;
         padding-top: 2rem;
+        min-height: auto;
+        padding-bottom: 2rem;
     }
 
     .progress {
@@ -151,7 +153,6 @@ button:focus-visible {
 @media screen and (orientation: landscape) and (max-height: 768px) {
     .page-wrapper {
         justify-content: flex-start;
-        padding-top: 2rem;
     }
 
     img {
