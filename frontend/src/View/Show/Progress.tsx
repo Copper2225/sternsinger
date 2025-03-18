@@ -2,6 +2,19 @@ import React, { useCallback, useMemo } from "react";
 import { District } from "src/requests/adminStore";
 import ProgressDistrict from "src/View/Show/ProgressDistrict";
 import { ProgressBar } from "react-bootstrap";
+import styled from "styled-components";
+
+const ProgressContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 90vw;
+
+    @media screen and (orientation: portrait) {
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 2em;
+    }
+`;
 
 interface Props {
     districts: District[];
@@ -41,13 +54,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
     return (
         <div className={"page-wrapper"}>
             <span className={"progress-title"}>Aktueller Fortschritt:</span>
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    width: "90vW",
-                }}
-            >
+            <ProgressContainer>
                 <ProgressDistrict
                     title={"Gesamt"}
                     value={total.value}
@@ -63,7 +70,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
                     value={dorf.value}
                     total={dorf.total}
                 />
-            </div>
+            </ProgressContainer>
             <ProgressBar now={total.value} max={total.total} />
         </div>
     );
