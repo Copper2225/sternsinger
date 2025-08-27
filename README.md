@@ -1,50 +1,74 @@
-# React + TypeScript + Vite
+## Sternsinger Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Full-stack application with a React + TypeScript + Vite frontend and a Node.js + Express backend. The app displays live collection progress and admin tools for managing districts and totals.
 
-Currently, two official plugins are available:
+### Monorepo layout
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- `frontend`: Vite React app (TypeScript)
+- `backend`: Node.js/Express server (WS + REST)
 
-## Expanding the ESLint configuration
+### Requirements
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Node.js 18+
 
-- Configure the top-level `parserOptions` property like this:
+### Quick start
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+# install deps for workspace
+npm install
+
+# start frontend and backend together
+npm run dev
+
+# build frontend
+npm run build
+
+# start both services in production-like mode
+npm start
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Frontend will run on `http://localhost:5173` (or Vite's port). Backend runs on `http://localhost:3000` unless overridden by environment variables.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### Frontend
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+- React 18, Vite 5, TypeScript
+- Styling with Bootstrap and styled-components
+- State with Recoil
+- Routing with React Router
+
+Common scripts (run from repo root or `-w frontend`):
+
+```bash
+npm run dev -w frontend      # Vite dev server
+npm run build -w frontend    # Build to dist/
+npm run preview -w frontend  # Preview built app
 ```
+
+### Backend
+
+- Express server with WebSocket support
+
+Scripts:
+
+```bash
+npm run dev -w backend   # Start server in dev
+npm run start -w backend # Start server
+```
+
+### Configuration
+
+Backend reads environment variables from `.env` if present. Typical values:
+
+```
+PORT=3000
+ORIGIN=http://localhost:5173
+```
+
+### Development tips
+
+- Use `npm run dev` at the root to run both services concurrently.
+- API base URLs: the frontend expects the backend at the same host/port configured via environment or proxy.
+
+### License
+
+This project is licensed under the MIT License. See `LICENSE` for details.

@@ -9,7 +9,7 @@
         "lint": "eslint .",
         "preview": "vite preview",
         "host": "vite --host",
-        "start": "serve -s dist -l 4173",
+        "start": "serve -s dist -l 4174",
         "prettier": "prettier . --write"
     },
     "dependencies": {
