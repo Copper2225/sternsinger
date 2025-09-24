@@ -21,6 +21,7 @@ export const bauernschaftenState = atom<Bauernschaft[]>({
     key: "bauernschaften",
     default: [
         { name: "Brock", amount: 3 },
+        { name: "Schirl", amount: 3},
         { name: "Überwasser", amount: 1 },
     ],
 });

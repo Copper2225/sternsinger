@@ -52,7 +52,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
     );
 
     return (
-        <div className={"page-wrapper"}>
+        <>
             <span className={"progress-title"}>Aktueller Fortschritt:</span>
             <ProgressContainer>
                 <ProgressDistrict
@@ -72,7 +72,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
                 />
             </ProgressContainer>
             <ProgressBar now={total.value} max={total.total} />
-        </div>
+        </>
     );
 };
 

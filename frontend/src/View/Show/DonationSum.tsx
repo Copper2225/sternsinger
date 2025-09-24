@@ -17,10 +17,10 @@ const DonationSum = ({ values }: Props): React.ReactElement => {
     );
 
     return (
-        <div className={"page-wrapper donation-wrapper"}>
+        <>
             <span className={"donation-title"}>Aktueller Spendenstand:</span>
             <span className={"donation-sum"}>{total}</span>
-        </div>
+        </>
     );
 };
 

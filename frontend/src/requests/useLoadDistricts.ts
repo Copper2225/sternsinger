@@ -7,6 +7,8 @@ import {
 import { useRecoilValue } from "recoil";
 import { useCallback } from "react";
 
+const skipped: number[] = [];
+
 export const useLoadDistricts = (): (() => District[]) => {
     const dorfBezirke = useRecoilValue(dorfBezirkeState);
     const bauernschaften = useRecoilValue(bauernschaftenState);
@@ -14,11 +16,23 @@ export const useLoadDistricts = (): (() => District[]) => {
 
     return useCallback(() => {
         const newDistricts = Array.from(
-            { length: dorfBezirke },
-            (_, index) => ({
-                name: `Bezirk ${index + 1}`,
-                counting: true,
-            }),
+            { length: dorfBezirke - skipped.length },
+            (_, index) => {
+                // Find the correct district number by accounting for skipped ones.
+                let districtNumber = index + 1;
+                let skippedCount = 0;
+
+                // This loop increments the district number for each skipped district it passes.
+                while (skippedCount < skipped.length && skipped[skippedCount] <= districtNumber) {
+                    districtNumber++;
+                    skippedCount++;
+                }
+
+                return {
+                    name: `Bezirk ${districtNumber}`,
+                    counting: true,
+                };
+            }
         );
 
         const newDistricts2 = bauernschaften.flatMap((b) => {
@@ -29,5 +43,5 @@ export const useLoadDistricts = (): (() => District[]) => {
             }));
         });
         return [...newDistricts, ...newDistricts2, ...others];
-    }, [bauernschaften, dorfBezirke, others]);
+    }, [bauernschaften, dorfBezirke, others, skipped]);
 };

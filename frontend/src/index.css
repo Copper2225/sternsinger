@@ -51,12 +51,47 @@ button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
+@keyframes slide-in-right {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-out-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
 .page-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.page-transition-enter {
+    animation: slide-in-right 1s ease-out forwards;
+}
+
+.page-transition-exit {
+    animation: slide-out-left 1s ease-in forwards;
+}
+
+/* Ensure only one element is visible at a time */
+.page-wrapper:not(.page-transition-enter):not(.page-transition-exit) {
+    display: none;
 }
 
 .progress {
