@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import bgImage from "src/assets/background.png";
+import bgImage from "src/assets/background26.png";
 import DonationSum from "src/View/Show/DonationSum";
 import { useRecoilState } from "recoil";
 import { districtsState } from "src/requests/adminStore";
