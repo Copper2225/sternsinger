@@ -147,6 +147,7 @@ button:focus-visible {
 
     iframe {
         max-height: 768px;
+        width: 100%;
     }
 }
 
