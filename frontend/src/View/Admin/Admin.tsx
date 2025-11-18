@@ -74,8 +74,11 @@ const Admin: React.FC = () => {
     }, []);
 
     return (
-        <div className={"d-flex flex-row"} style={{ paddingLeft: 30 }}>
-            <div style={{width: showFrame ? '25%' : '100%'}}>
+        <div className={"d-flex admin-div"} style={{ padding: 4 }}>
+            {showFrame && <div className={"frame-div p-2 align-content-center"}>
+                <iframe style={{aspectRatio: 16 / 9}} className={"border-2 border-black border"} src={"/"} />
+            </div>}
+            <div className={"w-100"}>
                 <h1>Admin Page</h1>
                 <div style={{ display: "flex", gap: 10 }}>
                     <ImportButton setState={handleOverwrite} />
@@ -95,9 +98,6 @@ const Admin: React.FC = () => {
                     </tbody>
                 </table>
             </div>
-            {showFrame && <div style={{ width: '80vw', height: '100vh'}} className={"p-2 align-content-center position-sticky top-0"}>
-                <iframe style={{aspectRatio: 16 / 9}} className={"w-100 border-2 border-black border"} src={"/"} />
-            </div>}
         </div>
     );
 };

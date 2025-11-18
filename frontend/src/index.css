@@ -96,10 +96,15 @@ button:focus-visible {
 
 .progress {
     --bs-progress-bar-bg: #f4c242;
-    width: 86vw;
+    width: 85vw;
     height: 50px;
-    margin-bottom: 150px;
     border-radius: 3rem;
+}
+
+.progress-div {
+    display: flex;
+    margin-bottom: 150px;
+    align-items: center;
 }
 
 .progress-title {
@@ -109,6 +114,12 @@ button:focus-visible {
 
 .progress-name {
     font-size: 3em;
+}
+
+.progress-value {
+    margin-left: 1em;
+    font-size: 2.8em;
+    line-height: 1;
 }
 
 .progress-numbers {
@@ -123,17 +134,40 @@ button:focus-visible {
     font-size: 4em;
 }
 
+.admin-div {
+    flex-direction: row-reverse;
+}
+
+.frame-div {
+    width: 75vw;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    aspect-Ratio: 16 / 9;
+
+    iframe {
+        max-height: 768px;
+    }
+}
+
 /* Mobile styles */
 @media screen and (max-width: 768px) {
     .page-wrapper {
-        justify-content: flex-start;
         min-height: auto;
         padding-bottom: 2rem;
     }
 
     .progress {
-        width: 92vw;
         height: 30px;
+    }
+
+    .progress-value {
+        margin-left: 1em;
+        font-size: 2em;
+        line-height: 1;
+    }
+
+    .progress-div {
         margin-bottom: 80px;
     }
 
@@ -162,12 +196,30 @@ button:focus-visible {
     .donation-title {
         font-size: 2em;
     }
+
+    .admin-div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .frame-div {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        top: 0;
+    }
 }
 
 /* Small mobile devices */
 @media screen and (max-width: 480px) {
-    .progress {
+    .progress-div {
         margin-bottom: 60px;
+    }
+
+    .progress-value {
+        margin-left: 1em;
+        font-size: 1em;
+        line-height: 1;
     }
 
     .progress-numbers {
@@ -185,18 +237,22 @@ button:focus-visible {
 
 /* Landscape mobile styles */
 @media screen and (orientation: landscape) and (max-height: 768px) {
-    .page-wrapper {
-        justify-content: flex-start;
-    }
-
     img {
         max-width: 40vw;
         height: auto;
     }
 
     .progress {
-        width: 92vw;
         height: 30px;
+    }
+
+    .progress-value {
+        margin-left: 1em;
+        font-size: 1.2em;
+        line-height: 1;
+    }
+
+    .progress-div {
         margin-bottom: 40px;
     }
 
@@ -219,5 +275,48 @@ button:focus-visible {
 
     .donation-title {
         font-size: 3em;
+    }
+}
+
+/* Landscape mobile styles */
+@media screen and (max-height: 300px) {
+    img {
+        max-width: 40vw;
+        height: auto;
+    }
+
+    .progress {
+        height: 1em;
+    }
+
+    .progress-value {
+        margin-left: 1em;
+        font-size: 0.7em;
+        line-height: 1;
+    }
+
+    .progress-div {
+        margin-bottom: 40px;
+    }
+
+    .progress-title {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
+
+    .progress-name {
+        font-size: 1em;
+    }
+
+    .progress-numbers {
+        font-size: 1em;
+    }
+
+    .donation-sum {
+        font-size: 2em;
+    }
+
+    .donation-title {
+        font-size: 1em;
     }
 }

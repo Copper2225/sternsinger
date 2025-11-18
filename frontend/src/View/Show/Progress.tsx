@@ -71,7 +71,10 @@ const Progress = ({ districts }: Props): React.ReactElement => {
                     total={dorf.total}
                 />
             </ProgressContainer>
-            <ProgressBar now={total.value} max={total.total} />
+            <div className={"progress-div"}>
+                <ProgressBar now={total.value} max={total.total} />
+                <span className={"progress-value"}>{(total.value/total.total*100).toFixed(1)} %</span>
+            </div>
         </>
     );
 };

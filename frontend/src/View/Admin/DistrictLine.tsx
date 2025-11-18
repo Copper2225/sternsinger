@@ -24,7 +24,7 @@ const DistrictLine = ({
 
     const handleSave = useCallback(() => {
         handleSubmit(
-            { ...district, money: inputValue != "" ? inputValue : undefined },
+            { ...district, money: inputValue != "" ? inputValue : null },
             index,
         );
     }, [district, handleSubmit, index, inputValue]);
@@ -61,7 +61,7 @@ const DistrictLine = ({
                     onKeyDown={handleKeyDown}
                 />
             </td>
-            <td style={{ padding: "10px" }}>
+            <td style={{ padding: "10px", minWidth: '80px' }}>
                 {inputValue !== (district.money ?? "") && (
                     <div style={{ display: "flex", gap: 8 }}>
                         <FontAwesomeIcon
