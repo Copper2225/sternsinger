@@ -158,7 +158,8 @@ button:focus-visible {
     }
 
     .progress {
-        height: 30px;
+        height: 20px;
+        width: 70vw;
     }
 
     .progress-value {
