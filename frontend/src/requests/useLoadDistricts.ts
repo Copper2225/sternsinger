@@ -23,7 +23,10 @@ export const useLoadDistricts = (): (() => District[]) => {
                 let skippedCount = 0;
 
                 // This loop increments the district number for each skipped district it passes.
-                while (skippedCount < skipped.length && skipped[skippedCount] <= districtNumber) {
+                while (
+                    skippedCount < skipped.length &&
+                    skipped[skippedCount] <= districtNumber
+                ) {
                     districtNumber++;
                     skippedCount++;
                 }
@@ -32,7 +35,7 @@ export const useLoadDistricts = (): (() => District[]) => {
                     name: `Bezirk ${districtNumber}`,
                     counting: true,
                 };
-            }
+            },
         );
 
         const newDistricts2 = bauernschaften.flatMap((b) => {
@@ -43,5 +46,5 @@ export const useLoadDistricts = (): (() => District[]) => {
             }));
         });
         return [...newDistricts, ...newDistricts2, ...others];
-    }, [bauernschaften, dorfBezirke, others, skipped]);
+    }, [bauernschaften, dorfBezirke, others]);
 };

@@ -13,15 +13,14 @@ const App: React.FC = () => {
     const [viewIndex, setViewIndex] = useState<number>(0);
     const [leavingIndex, setLeavingIndex] = useState<number>(-1);
 
-    // This effect handles the view change and animation
     useEffect(() => {
         const interval = setInterval(() => {
-            setLeavingIndex(viewIndex); // Mark the current view as 'leaving'
+            setLeavingIndex(viewIndex);
             setTimeout(() => {
-                setViewIndex(prevState => (prevState + 1) % 2);
-                setLeavingIndex(-1); // Reset leaving state after animation
-            }, 1000); // This delay should match your CSS animation duration
-        }, 10000); // 10-second interval
+                setViewIndex((prevState) => (prevState + 1) % 2);
+                setLeavingIndex(-1);
+            }, 1000);
+        }, 10000);
 
         return () => clearInterval(interval);
     }, [viewIndex]); // Add viewIndex to dependencies to ensure effect re-runs
@@ -52,12 +51,22 @@ const App: React.FC = () => {
     }, [backendURL, loadDistricts, setDistricts]);
 
     return (
-        <div style={{ position: 'relative', overflow: 'hidden', height: '100vh' }}>
-            <div className={`donation-wrapper page-wrapper ${viewIndex === 0 ? 'page-active' : ''} ${leavingIndex === 0 ? 'page-transition-exit' : ''} ${viewIndex === 0 ? 'page-transition-enter' : ''}`}>
-                <DonationSum values={districts.map(e => e.money ?? 0)} />
+        <div
+            style={{
+                position: "relative",
+                overflow: "hidden",
+                height: "100vh",
+            }}
+        >
+            <div
+                className={`donation-wrapper page-wrapper ${viewIndex === 0 ? "page-active" : ""} ${leavingIndex === 0 ? "page-transition-exit" : ""} ${viewIndex === 0 ? "page-transition-enter" : ""}`}
+            >
+                <DonationSum values={districts.map((e) => e.money ?? 0)} />
             </div>
 
-            <div className={`page-wrapper ${viewIndex === 1 ? 'page-active' : ''} ${leavingIndex === 1 ? 'page-transition-exit' : ''} ${viewIndex === 1 ? 'page-transition-enter' : ''}`}>
+            <div
+                className={`page-wrapper ${viewIndex === 1 ? "page-active" : ""} ${leavingIndex === 1 ? "page-transition-exit" : ""} ${viewIndex === 1 ? "page-transition-enter" : ""}`}
+            >
                 <Progress districts={districts} />
             </div>
 

@@ -1,14 +1,16 @@
-import React, { useCallback, useEffect } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { useRecoilState } from "recoil";
 import { District, districtsState } from "src/requests/adminStore";
 import DistrictLine from "src/View/Admin/DistrictLine";
 import { useLoadDistricts } from "src/requests/useLoadDistricts";
 import ImportButton from "src/View/Admin/ImportButton";
 import ExportButton from "src/View/Admin/ExportButton";
+import { FormCheck } from "react-bootstrap";
 
 const Admin: React.FC = () => {
     const loadDistricts = useLoadDistricts();
     const [districts, setDistricts] = useRecoilState(districtsState);
+    const [showFrame, setShowFrame] = useState(false);
     const backendURL = import.meta.env.VITE_BACKEND_URL;
 
     const handleOverwrite = useCallback(
@@ -67,15 +69,21 @@ const Admin: React.FC = () => {
         [backendURL, setDistricts],
     );
 
+    const handleFrameChange = useCallback(() => {
+        setShowFrame(prev => !prev);
+    }, []);
+
     return (
-        <div style={{ paddingLeft: 30 }}>
-            <h1>Admin Page</h1>
-            <div style={{ display: "flex", gap: 10 }}>
-                <ImportButton setState={handleOverwrite} />
-                <ExportButton values={districts} name={"districts"} />
-            </div>
-            <table style={{ marginTop: "20px" }}>
-                <tbody>
+        <div className={"d-flex flex-row"} style={{ paddingLeft: 30 }}>
+            <div style={{width: showFrame ? '25%' : '100%'}}>
+                <h1>Admin Page</h1>
+                <div style={{ display: "flex", gap: 10 }}>
+                    <ImportButton setState={handleOverwrite} />
+                    <ExportButton values={districts} name={"districts"} />
+                    <FormCheck className={"text-center align-content-center"} type={"switch"} onChange={handleFrameChange} />
+                </div>
+                <table style={{ marginTop: "20px" }}>
+                    <tbody>
                     {districts.map((district, index) => (
                         <DistrictLine
                             key={index}
@@ -84,8 +92,12 @@ const Admin: React.FC = () => {
                             index={index}
                         />
                     ))}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+            {showFrame && <div style={{ width: '80vw', height: '100vh'}} className={"p-2 align-content-center position-sticky top-0"}>
+                <iframe style={{aspectRatio: 16 / 9}} className={"w-100 border-2 border-black border"} src={"/"} />
+            </div>}
         </div>
     );
 };
