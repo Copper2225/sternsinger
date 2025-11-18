@@ -2,8 +2,8 @@ import { atom } from "recoil";
 
 export interface District {
     name: string;
-    money?: number;
-    bauernschaft?: boolean;
+    money: number | null;
+    bauernschaft: boolean;
     counting: boolean;
 }
 
@@ -29,8 +29,8 @@ export const bauernschaftenState = atom<Bauernschaft[]>({
 export const otherDistrictsState = atom<District[]>({
     key: "otherDistricts",
     default: [
-        { name: "Neujahrsempfang", counting: false },
-        { name: "Sonstiges", counting: false },
+        { name: "Neujahrsempfang", counting: false, bauernschaft: false, money: null },
+        { name: "Sonstiges", counting: false, bauernschaft: false, money: null },
     ],
 });
 

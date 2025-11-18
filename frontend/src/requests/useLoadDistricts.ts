@@ -34,6 +34,8 @@ export const useLoadDistricts = (): (() => District[]) => {
                 return {
                     name: `Bezirk ${districtNumber}`,
                     counting: true,
+                    bauernschaft: false,
+                    money: null,
                 };
             },
         );
@@ -43,6 +45,7 @@ export const useLoadDistricts = (): (() => District[]) => {
                 name: `${b.name}${b.amount > 1 ? ` ${index + 1}` : ""}`,
                 counting: true,
                 bauernschaft: true,
+                money: null,
             }));
         });
         return [...newDistricts, ...newDistricts2, ...others];
