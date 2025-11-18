@@ -152,7 +152,7 @@ button:focus-visible {
 }
 
 /* Mobile styles */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 768px) and (orientation: portrait) {
     .page-wrapper {
         min-height: auto;
         padding-bottom: 2rem;
@@ -277,6 +277,10 @@ button:focus-visible {
 
     .donation-title {
         font-size: 3em;
+    }
+
+    .frame-div {
+        width: 50vw;
     }
 }
 
