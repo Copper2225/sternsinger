@@ -320,4 +320,8 @@ button:focus-visible {
     .donation-title {
         font-size: 1em;
     }
+
+    .frame-div {
+        width: 100vw;
+    }
 }
