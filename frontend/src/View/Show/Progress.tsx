@@ -38,6 +38,10 @@ const Progress = ({ districts }: Props): React.ReactElement => {
         [districts],
     );
 
+    const withProgressText = useMemo(() => {
+        return new URLSearchParams(window.location.search).get("value") !== null;
+    }, []);
+
     const total = useMemo(
         () => calculateProgress((d) => d.counting),
         [calculateProgress],
@@ -73,7 +77,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
             </ProgressContainer>
             <div className={"progress-div"}>
                 <ProgressBar now={total.value} max={total.total} />
-                <span className={"progress-value"}>{(total.value/total.total*100).toFixed(1)} %</span>
+                {withProgressText && <span className={"progress-value"}>{(total.value/total.total*100).toFixed(1)} %</span>}
             </div>
         </>
     );

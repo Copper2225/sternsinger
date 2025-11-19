@@ -97,7 +97,7 @@ button:focus-visible {
 .progress {
     --bs-progress-bar-bg: #f4c242;
     width: 85vw;
-    height: 50px;
+    height: 40px;
     border-radius: 3rem;
 }
 

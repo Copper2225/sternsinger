@@ -23,10 +23,9 @@ const App: React.FC = () => {
         }, 10000);
 
         return () => clearInterval(interval);
-    }, [viewIndex]); // Add viewIndex to dependencies to ensure effect re-runs
+    }, [viewIndex]);
 
     useEffect(() => {
-        // Fetch district values
         fetch(`${backendURL}/districts`)
             .then((response) => response.json())
             .then((data) => setDistricts(data || []))
@@ -36,7 +35,6 @@ const App: React.FC = () => {
 
         setDistricts(loadDistricts);
 
-        // WebSocket connection
         const ws = new WebSocket(`${backendURL.replace(/^http/, "ws")}`);
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
@@ -70,13 +68,11 @@ const App: React.FC = () => {
                 <Progress districts={districts} />
             </div>
 
-            <a href="/admin">
-                <img
-                    style={{ position: "absolute", bottom: 15, right: 15 }}
-                    src={bgImage}
-                    alt="Background"
-                />
-            </a>
+            <img
+                style={{ position: "absolute", bottom: 15, right: 15 }}
+                src={bgImage}
+                alt="Background"
+            />
         </div>
     );
 };
