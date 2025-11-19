@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import bgImage from "src/assets/background26.png";
 import DonationSum from "src/View/Show/Donation/DonationSum";
 import { useRecoilState } from "recoil";
@@ -14,17 +14,36 @@ const App: React.FC = () => {
     const [viewIndex, setViewIndex] = useState<number>(0);
     const [leavingIndex, setLeavingIndex] = useState<number>(-1);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setLeavingIndex(viewIndex);
-            setTimeout(() => {
-                setViewIndex((prevState) => (prevState + 1) % 3);
-                setLeavingIndex(-1);
-            }, 1000);
-        }, 10000);
+    const deactivates = useMemo(() => {
+        const deacts = [];
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get("summe")) {
+            deacts.push(0);
+        }
+        if (searchParams.get("progress")) {
+            deacts.push(1);
+        }
+        if (searchParams.get("status")) {
+            deacts.push(2);
+        }
+        return deacts;
+    }, []);
 
-        return () => clearInterval(interval);
-    }, [viewIndex]);
+    useEffect(() => {
+        if (deactivates.length < 2) {
+            const interval = setInterval(() => {
+                setLeavingIndex(viewIndex);
+                setTimeout(() => {
+                    setViewIndex(
+                        (prevState) => (prevState + 1) % (3 - deactivates.length),
+                    );
+                    setLeavingIndex(-1);
+                }, 1000);
+            }, 10000);
+
+            return () => clearInterval(interval);
+        }
+    }, [deactivates.length, viewIndex]);
 
     useEffect(() => {
         fetch(`${backendURL}/districts`)
@@ -49,6 +68,12 @@ const App: React.FC = () => {
         };
     }, [backendURL, loadDistricts, setDistricts]);
 
+    console.log(
+        viewIndex,
+        1 - deactivates.filter((e) => e < 1).length,
+        leavingIndex,
+    );
+
     return (
         <div
             style={{
@@ -57,28 +82,31 @@ const App: React.FC = () => {
                 height: "100vh",
             }}
         >
-            <div
-                className={`donation-wrapper page-wrapper ${viewIndex === 0 ? "page-active" : ""} ${leavingIndex === 0 ? "page-transition-exit" : ""} ${viewIndex === 0 ? "page-transition-enter" : ""}`}
-            >
-                <DonationSum values={districts.map((e) => e.money ?? 0)} />
-            </div>
+            {!deactivates.includes(0) && (
+                <div
+                    className={`donation-wrapper page-wrapper ${viewIndex === 0 ? "page-active" : ""} ${leavingIndex === 0 ? "page-transition-exit" : ""} ${viewIndex === 0 ? "page-transition-enter" : ""}`}
+                >
+                    <DonationSum values={districts.map((e) => e.money ?? 0)} />
+                </div>
+            )}
 
-            <div
-                className={`page-wrapper ${viewIndex === 1 ? "page-active" : ""} ${leavingIndex === 1 ? "page-transition-exit" : ""} ${viewIndex === 1 ? "page-transition-enter" : ""}`}
-            >
-                <Progress districts={districts} />
-            </div>
+            {!deactivates.includes(1) && (
+                <div
+                    className={`page-wrapper ${viewIndex === 1 - deactivates.filter((e) => e < 1).length ? "page-active" : ""} ${leavingIndex === 1 - deactivates.filter((e) => e < 1).length ? "page-transition-exit" : ""} ${viewIndex === 1 - deactivates.filter((e) => e < 1).length ? "page-transition-enter" : ""}`}
+                >
+                    <Progress districts={districts} />
+                </div>
+            )}
 
-            <div
-                className={`page-wrapper ${viewIndex === 2 ? "page-active" : ""} ${leavingIndex === 2 ? "page-transition-exit" : ""} ${viewIndex === 2 ? "page-transition-enter" : ""}`}
-            >
-                <DistrictStatus districts={districts} />
-            </div>
+            {!deactivates.includes(2) && (
+                <div
+                    className={`page-wrapper ${viewIndex === 2 - deactivates.filter((e) => e < 2).length ? "page-active" : ""} ${leavingIndex === 2 - deactivates.filter((e) => e < 2).length ? "page-transition-exit" : ""} ${viewIndex === 2 - deactivates.filter((e) => e < 2).length ? "page-transition-enter" : ""}`}
+                >
+                    <DistrictStatus districts={districts} />
+                </div>
+            )}
 
-            <img
-                src={bgImage}
-                alt="Background"
-            />
+            <img src={bgImage} alt="Background" />
         </div>
     );
 };
