@@ -1,6 +1,12 @@
 import {DistrictStatusText} from "src/requests/adminStore";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleCheck, faPersonWalking, faUsers, faUsersSlash,} from "@fortawesome/free-solid-svg-icons";
+import {
+    faCalculator,
+    faCircleCheck,
+    faPersonWalking,
+    faUsers,
+    faUsersSlash,
+} from "@fortawesome/free-solid-svg-icons";
 import React, {useMemo} from "react";
 
 interface Props {
@@ -18,6 +24,8 @@ const StatusIcon = ({ status, colored = true}: Props) => {
                 return faCircleCheck;
             case DistrictStatusText.walking:
                 return faPersonWalking;
+            case DistrictStatusText.calculating:
+                return faCalculator;
             default:
                 return  faUsersSlash;
         }

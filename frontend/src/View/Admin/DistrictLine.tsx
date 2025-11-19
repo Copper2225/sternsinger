@@ -58,7 +58,9 @@ const DistrictLine = ({
             case DistrictStatusText.planned :
                 return "warning";
             case DistrictStatusText.walking :
-                return "info";
+                return "primary";
+            case DistrictStatusText.calculating :
+                return "secondary";
             case DistrictStatusText.notPlanned :
             default: return "danger";
         }

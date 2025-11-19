@@ -5,7 +5,7 @@ import {
     ModalHeader,
     ModalTitle,
 } from "react-bootstrap";
-import React, {Dispatch, SetStateAction, useCallback, useMemo} from "react";
+import React, { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { District, DistrictStatusText } from "src/requests/adminStore";
 import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
 
@@ -22,32 +22,43 @@ interface ButtonProps {
     handleButtonSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const StatusChangeButton = ({handleButtonSubmit, status}: ButtonProps) => {
+const StatusChangeButton = ({ handleButtonSubmit, status }: ButtonProps) => {
     const buttonVariant = useMemo(() => {
         switch (status) {
-            case DistrictStatusText.finished :
+            case DistrictStatusText.finished:
                 return "success";
-            case DistrictStatusText.planned :
+            case DistrictStatusText.planned:
                 return "warning";
-            case DistrictStatusText.walking :
-                return "info";
-            case DistrictStatusText.notPlanned :
-            default: return "danger";
+            case DistrictStatusText.walking:
+                return "primary";
+            case DistrictStatusText.calculating:
+                return "secondary";
+            case DistrictStatusText.notPlanned:
+            default:
+                return "danger";
         }
-    }, [status])
+    }, [status]);
 
-    return (<Button
-        value={status}
-        variant={buttonVariant}
-        onClick={handleButtonSubmit}
-        className={"justify-content-center"}
-        style={{ width: "100px"}}
-    >
-        <StatusIcon colored={false} status={status} />
-    </Button>)
-}
+    return (
+        <Button
+            value={status}
+            variant={buttonVariant}
+            onClick={handleButtonSubmit}
+            className={"justify-content-center"}
+            style={{ width: "100px" }}
+        >
+            <StatusIcon colored={false} status={status} />
+        </Button>
+    );
+};
 
-const StatusChangeModal = ({ district, showModal, setShowModal, handleSubmit, index }: Props) => {
+const StatusChangeModal = ({
+    district,
+    showModal,
+    setShowModal,
+    handleSubmit,
+    index,
+}: Props) => {
     const handleClose = useCallback(() => {
         setShowModal(false);
     }, [setShowModal]);
@@ -72,21 +83,27 @@ const StatusChangeModal = ({ district, showModal, setShowModal, handleSubmit, in
                 <ModalTitle>Bezirks Status Update</ModalTitle>
             </ModalHeader>
             <ModalBody>
-                <div className={"d-flex w-100 justify-content-around"}>
+                <div className={"d-flex w-100 justify-content-around gap-3"}>
                     <StatusChangeButton
                         status={DistrictStatusText.notPlanned}
                         handleButtonSubmit={handleButtonSubmit}
-                    /><StatusChangeButton
+                    />
+                    <StatusChangeButton
                         status={DistrictStatusText.planned}
                         handleButtonSubmit={handleButtonSubmit}
-                    /><StatusChangeButton
+                    />
+                    <StatusChangeButton
                         status={DistrictStatusText.walking}
                         handleButtonSubmit={handleButtonSubmit}
-                    /><StatusChangeButton
+                    />
+                    <StatusChangeButton
+                        status={DistrictStatusText.calculating}
+                        handleButtonSubmit={handleButtonSubmit}
+                    />
+                    <StatusChangeButton
                         status={DistrictStatusText.finished}
                         handleButtonSubmit={handleButtonSubmit}
                     />
-
                 </div>
             </ModalBody>
         </Modal>

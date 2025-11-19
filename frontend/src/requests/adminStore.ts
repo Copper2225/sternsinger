@@ -5,6 +5,7 @@ export enum DistrictStatusText {
     walking = "walking",
     notPlanned = "notPlanned",
     finished = "finished",
+    calculating = "calculating",
 }
 
 export interface District {
