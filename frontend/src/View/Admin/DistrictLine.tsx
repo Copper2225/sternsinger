@@ -66,15 +66,15 @@ const DistrictLine = ({
 
     return (
         <tr style={{ height: "10px" }}>
-            <td style={{ padding: "10px 10px 10px 0" }}>
+            <td style={{ padding: "10px 0" }}>
                 <Button variant={buttonVariant} style={{width: "3.4em"}} onClick={() => setShowModal(true)}>
                     <StatusIcon colored={false} status={district.status} />
                 </Button>
             </td>
-            <td style={{ padding: "10px 10px 10px 0" }}>
+            <td style={{ padding: "10px 5px" }}>
                 <label style={{ fontSize: "larger" }}>{district.name}:</label>
             </td>
-            <td style={{ padding: "10px", width: "200px" }}>
+            <td style={{ padding: "10px 0", width: "200px" }}>
                 <input
                     type="number"
                     value={inputValue}
