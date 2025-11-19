@@ -1,6 +1,6 @@
 import {
     bauernschaftenState,
-    District,
+    District, DistrictStatusText,
     dorfBezirkeState,
     otherDistrictsState,
 } from "src/requests/adminStore";
@@ -35,7 +35,7 @@ export const useLoadDistricts = (): (() => District[]) => {
                     name: `Bezirk ${districtNumber}`,
                     counting: true,
                     bauernschaft: false,
-                    money: null,
+                    status: DistrictStatusText.notPlanned
                 };
             },
         );
@@ -45,7 +45,7 @@ export const useLoadDistricts = (): (() => District[]) => {
                 name: `${b.name}${b.amount > 1 ? ` ${index + 1}` : ""}`,
                 counting: true,
                 bauernschaft: true,
-                money: null,
+                status: DistrictStatusText.notPlanned
             }));
         });
         return [...newDistricts, ...newDistricts2, ...others];

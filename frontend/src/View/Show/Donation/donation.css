@@ -1,0 +1,55 @@
+.donation-sum {
+    font-size: 6em;
+    line-height: 1;
+}
+
+.donation-title {
+    font-size: 3em;
+    line-height: 1;
+    margin-bottom: 0.5em;
+}
+
+.donation-wrapper {
+    font-size: 50px;
+    display: flex;
+    height: 100%;
+    align-content: start;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8vh;
+    padding-bottom: calc(20vh + 10px);
+}
+
+/* Mobile styles */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .donation-wrapper {
+        font-size: 14px;
+        padding-top: 10vh;
+    }
+}
+
+/* Landscape mobile styles */
+@media screen and (orientation: landscape) and (max-height: 768px) {
+    .donation-wrapper {
+        font-size: 30px;
+        padding-top: 10vh;
+    }
+
+}
+
+@media screen and (orientation: landscape) and (max-height: 450px) {
+    .donation-wrapper {
+        font-size: 20px;
+        padding-top: 10vh;
+    }
+
+}
+
+/* Landscape mobile styles */
+@media screen and (max-height: 300px) {
+    .donation-wrapper {
+        font-size: 10px;
+        padding-top: 15vh;
+    }
+}

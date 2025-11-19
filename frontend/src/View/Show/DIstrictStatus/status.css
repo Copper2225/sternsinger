@@ -1,0 +1,87 @@
+.status-grid {
+    display: grid;
+    grid-Auto-Flow: column dense;
+}
+
+.status-title {
+    margin-top: 40px;
+    font-size: 6em;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.status-name {
+    font-size: 2em;
+}
+
+.status-item {
+    font-size: 3em;
+
+    .status-icon {
+        font-size: 0.6em;
+        margin-right: 1em;
+    }
+}
+
+.status-wrapper {
+    margin-bottom: calc(20vh + 2em);
+    padding-inline: 3em;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+/* Mobile styles */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .status-wrapper {
+        font-size: 6px;
+
+        .status-grid {
+            display: flex;
+            flex-direction: column;
+            overflow: scroll;
+            max-height: 60vh;
+        }
+    }
+
+    .status-title {
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+}
+
+/* Landscape mobile styles */
+@media screen and (orientation: landscape) and (max-height: 768px) {
+    .status-wrapper {
+        font-size: 10px;
+    }
+
+    .status-title {
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+}
+
+@media screen and (orientation: landscape) and (max-height: 500px) {
+    .status-wrapper {
+        font-size: 6px;
+    }
+
+    .status-title {
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+}
+
+/* mobile preview styles */
+@media screen and (max-height: 300px) {
+    .status-wrapper {
+        font-size: 3px;
+    }
+
+    .status-title {
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+}

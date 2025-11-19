@@ -1,0 +1,133 @@
+.progress {
+    --bs-progress-bar-bg: #f4c242;
+    width: 85vw;
+    height: 40px;
+    border-radius: 3rem;
+}
+
+.progress-div {
+    display: flex;
+    align-items: center;
+}
+
+.progress-title {
+    font-size: 8em;
+}
+
+.progress-name {
+    font-size: 3em;
+}
+
+.progress-value {
+    margin-left: 1em;
+    font-size: 2.8em;
+    line-height: 1;
+}
+
+.progress-numbers {
+    font-size: 10em;
+}
+
+.progress-wrapper {
+    display: flex;
+    height: 100%;
+    align-content: start;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15vh;
+    margin-bottom: calc(20vh + 10px);
+}
+
+/* Mobile styles */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .progress-wrapper {
+        font-size: 24px;
+    }
+
+    .progress-title {
+        font-size: 3em;
+    }
+
+    .progress-name {
+        font-size: 1em;
+    }
+
+    .progress-numbers {
+        font-size: 2em;
+    }
+
+    .progress {
+        height: 2em;
+    }
+}
+
+/* Landscape mobile styles */
+@media screen and (orientation: landscape) and (max-height: 768px) {
+    .progress-wrapper {
+        font-size: 33px;
+    }
+
+    .progress-title {
+        font-size: 3em;
+    }
+
+    .progress-name {
+        font-size: 2em;
+    }
+
+    .progress-numbers {
+        font-size: 2.5em;
+    }
+
+    .progress {
+        height: 2em;
+    }
+}
+
+@media screen and (orientation: landscape) and (max-height: 450px) {
+    .progress-wrapper {
+        font-size: 24px;
+    }
+
+    .progress-title {
+        font-size: 3em;
+    }
+
+    .progress-name {
+        font-size: 1em;
+    }
+
+    .progress-numbers {
+        font-size: 2em;
+    }
+
+    .progress {
+        height: 2em;
+    }
+}
+
+/* Landscape mobile styles */
+@media screen and (max-height: 300px) {
+
+    .progress-wrapper {
+        font-size: 10px;
+    }
+
+    .progress-title {
+        font-size: 3em;
+        margin-bottom: 0.6em;
+    }
+
+    .progress-name {
+        font-size: 1em;
+    }
+
+    .progress-numbers {
+        font-size: 2em;
+    }
+
+    .progress {
+        height: 1em;
+    }
+}

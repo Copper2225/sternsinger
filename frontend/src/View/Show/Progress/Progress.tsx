@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo } from "react";
 import { District } from "src/requests/adminStore";
-import ProgressDistrict from "src/View/Show/ProgressDistrict";
+import ProgressDistrict from "src/View/Show/Progress/ProgressDistrict";
 import { ProgressBar } from "react-bootstrap";
 import styled from "styled-components";
+import "./progress.css";
 
 const ProgressContainer = styled.div`
     display: flex;
@@ -47,7 +48,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
         [calculateProgress],
     );
     const bauernschaften = useMemo(
-        () => calculateProgress((d) => d.counting && d.bauernschaft == true),
+        () => calculateProgress((d) => d.counting && d.bauernschaft),
         [calculateProgress],
     );
     const dorf = useMemo(
@@ -56,30 +57,30 @@ const Progress = ({ districts }: Props): React.ReactElement => {
     );
 
     return (
-        <>
-            <span className={"progress-title"}>Aktueller Fortschritt:</span>
-            <ProgressContainer>
-                <ProgressDistrict
-                    title={"Gesamt"}
-                    value={total.value}
-                    total={total.total}
-                />
-                <ProgressDistrict
-                    title={"Bauernschaften"}
-                    value={bauernschaften.value}
-                    total={bauernschaften.total}
-                />
-                <ProgressDistrict
-                    title={"Dorf"}
-                    value={dorf.value}
-                    total={dorf.total}
-                />
-            </ProgressContainer>
-            <div className={"progress-div"}>
-                <ProgressBar now={total.value} max={total.total} />
-                {withProgressText && <span className={"progress-value"}>{(total.value/total.total*100).toFixed(1)} %</span>}
-            </div>
-        </>
+
+            <div className={"progress-wrapper"}><span className={"progress-title"}>Aktueller Fortschritt:</span>
+                <ProgressContainer>
+                    <ProgressDistrict
+                        title={"Gesamt"}
+                        value={total.value}
+                        total={total.total}
+                    />
+                    <ProgressDistrict
+                        title={"Bauernschaften"}
+                        value={bauernschaften.value}
+                        total={bauernschaften.total}
+                    />
+                    <ProgressDistrict
+                        title={"Dorf"}
+                        value={dorf.value}
+                        total={dorf.total}
+                    />
+                </ProgressContainer>
+                <div className={"progress-div"}>
+                    <ProgressBar now={total.value} max={total.total} />
+                    {withProgressText && <span className={"progress-value"}>{(total.value/total.total*100).toFixed(1)} %</span>}
+                </div></div>
+
     );
 };
 

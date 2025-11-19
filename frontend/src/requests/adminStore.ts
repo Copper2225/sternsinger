@@ -1,10 +1,18 @@
 import { atom } from "recoil";
 
+export enum DistrictStatusText {
+    planned = "planned",
+    walking = "walking",
+    notPlanned = "notPlanned",
+    finished = "finished",
+}
+
 export interface District {
     name: string;
-    money: number | null;
     bauernschaft: boolean;
     counting: boolean;
+    money?: number;
+    status?: DistrictStatusText;
 }
 
 interface Bauernschaft {
@@ -29,8 +37,8 @@ export const bauernschaftenState = atom<Bauernschaft[]>({
 export const otherDistrictsState = atom<District[]>({
     key: "otherDistricts",
     default: [
-        { name: "Neujahrsempfang", counting: false, bauernschaft: false, money: null },
-        { name: "Sonstiges", counting: false, bauernschaft: false, money: null },
+        { name: "Neujahrsempfang", counting: false, bauernschaft: false },
+        { name: "Sonstiges", counting: false, bauernschaft: false },
     ],
 });
 

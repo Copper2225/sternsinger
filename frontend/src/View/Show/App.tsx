@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import bgImage from "src/assets/background26.png";
-import DonationSum from "src/View/Show/DonationSum";
+import DonationSum from "src/View/Show/Donation/DonationSum";
 import { useRecoilState } from "recoil";
 import { districtsState } from "src/requests/adminStore";
 import { useLoadDistricts } from "src/requests/useLoadDistricts";
-import Progress from "src/View/Show/Progress";
+import Progress from "src/View/Show/Progress/Progress";
+import DistrictStatus from "src/View/Show/DIstrictStatus/DistrictStatus";
 
 const App: React.FC = () => {
     const [districts, setDistricts] = useRecoilState(districtsState);
@@ -17,7 +18,7 @@ const App: React.FC = () => {
         const interval = setInterval(() => {
             setLeavingIndex(viewIndex);
             setTimeout(() => {
-                setViewIndex((prevState) => (prevState + 1) % 2);
+                setViewIndex((prevState) => (prevState + 1) % 3);
                 setLeavingIndex(-1);
             }, 1000);
         }, 10000);
@@ -68,8 +69,13 @@ const App: React.FC = () => {
                 <Progress districts={districts} />
             </div>
 
+            <div
+                className={`page-wrapper ${viewIndex === 2 ? "page-active" : ""} ${leavingIndex === 2 ? "page-transition-exit" : ""} ${viewIndex === 2 ? "page-transition-enter" : ""}`}
+            >
+                <DistrictStatus districts={districts} />
+            </div>
+
             <img
-                style={{ position: "absolute", bottom: 15, right: 15 }}
                 src={bgImage}
                 alt="Background"
             />

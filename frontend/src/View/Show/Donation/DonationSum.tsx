@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import "./donation.css";
 
 interface Props {
     values: number[];
@@ -17,10 +18,10 @@ const DonationSum = ({ values }: Props): React.ReactElement => {
     );
 
     return (
-        <>
+        <div className="donation-wrapper">
             <span className={"donation-title"}>Aktueller Spendenstand:</span>
             <span className={"donation-sum"}>{total}</span>
-        </>
+        </div>
     );
 };
 
