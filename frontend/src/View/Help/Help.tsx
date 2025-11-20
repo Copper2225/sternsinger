@@ -5,7 +5,7 @@ const getStatusValues = (statusObject: typeof DistrictStatusText): string[] => {
 };
 
 const Help = () => {
-    const allStati = getStatusValues(DistrictStatusText);
+    const allStatus = getStatusValues(DistrictStatusText);
 
     return (
         <div className={"p-3"}>
@@ -17,9 +17,9 @@ const Help = () => {
             <h3>URL Parameter</h3>
             <ul>
                 <li><code>?value=true</code>: Zeigt die Prozentzahl beim Fortschritt an.</li>
-                <li><code>?summe</code>: Blendet die Spendensumme aus.</li>
-                <li><code>?progress</code>: Blendet den Fortschrittsbalken aus.</li>
-                <li><code>?status</code>: Blendet die Bezirks-Status-Symbole aus.</li>
+                <li><code>?summe=true</code>: Blendet die Spendensumme aus.</li>
+                <li><code>?progress=true</code>: Blendet den Fortschrittsbalken aus.</li>
+                <li><code>?status=true</code>: Blendet die Bezirks-Status-Symbole aus.</li>
             </ul>
 
             <hr />
@@ -45,7 +45,8 @@ const Help = () => {
         "counting": false,
         "bauernschaft": false,
         "status": "walking" // Optional, siehe unten
-    }
+    },
+    ...
 ]`}
                 </code>
             </pre>
@@ -55,7 +56,7 @@ const Help = () => {
             <h3>Alle möglichen Status-Werte</h3>
             <p>Dies sind die gültigen Werte für das optionale Feld <code>"status"</code>:</p>
             <ul>
-                {allStati.map((status) => (
+                {allStatus.map((status) => (
                     <li key={status}><code>{status}</code></li>
                 ))}
             </ul>

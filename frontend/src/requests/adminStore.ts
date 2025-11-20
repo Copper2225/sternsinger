@@ -1,11 +1,11 @@
 import { atom } from "recoil";
 
 export enum DistrictStatusText {
+    notPlanned = "notPlanned",
     planned = "planned",
     walking = "walking",
-    notPlanned = "notPlanned",
-    finished = "finished",
     calculating = "calculating",
+    finished = "finished",
 }
 
 export interface District {

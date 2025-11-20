@@ -8,13 +8,15 @@ import {
     faUsersSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import React, {useMemo} from "react";
+import {SizeProp} from "@fortawesome/fontawesome-svg-core";
 
 interface Props {
     status: DistrictStatusText | undefined;
     colored?: boolean;
+    size?: SizeProp;
 }
 
-const StatusIcon = ({ status, colored = true}: Props) => {
+const StatusIcon = ({ status, colored = true, size = "lg"}: Props) => {
 
     const icon = useMemo(() => {
         switch (status) {
@@ -43,7 +45,7 @@ const StatusIcon = ({ status, colored = true}: Props) => {
 
     return (
         <div className={`status-icon`}>
-            <FontAwesomeIcon style={{aspectRatio: 1}} color={colored ? color : undefined} size={"lg"} icon={icon} />
+            <FontAwesomeIcon style={{aspectRatio: 1}} color={colored ? color : undefined} size={size} icon={icon} />
         </div>
     );
 };
