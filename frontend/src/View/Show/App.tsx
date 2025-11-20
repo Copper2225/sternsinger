@@ -68,18 +68,12 @@ const App: React.FC = () => {
         };
     }, [backendURL, loadDistricts, setDistricts]);
 
-    console.log(
-        viewIndex,
-        1 - deactivates.filter((e) => e < 1).length,
-        leavingIndex,
-    );
-
     return (
         <div
             style={{
                 position: "relative",
                 overflow: "hidden",
-                height: "100vh",
+                height: "100svh",
             }}
         >
             {!deactivates.includes(0) && (

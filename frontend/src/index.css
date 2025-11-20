@@ -100,7 +100,7 @@ button:focus-visible {
 
 .frame-div {
     width: 75vw;
-    height: 100vh;
+    height: 100svh;
     position: sticky;
     top: 0;
     aspect-Ratio: 16 / 9;
