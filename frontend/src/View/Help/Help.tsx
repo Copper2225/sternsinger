@@ -31,12 +31,9 @@ const Help = () => {
 {`[
     {
         "name": "Dorf #1",
-        "counting": true,
-        "bauernschaft": false,
     },
     {
         "name": "Überwasser",
-        "counting": true,
         "bauernschaft": true,
         "money": 356.12 // Optional
     },
