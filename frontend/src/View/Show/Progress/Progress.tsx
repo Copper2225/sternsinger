@@ -17,6 +17,17 @@ const ProgressContainer = styled.div`
     }
 `;
 
+const ProgressTypesContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    min-width: 60vw;
+    width: 100%;
+
+    @media screen and (orientation: portrait) {
+        gap: 1.5rem;
+    }
+`;
+
 interface Props {
     districts: District[];
 }
@@ -40,7 +51,9 @@ const Progress = ({ districts }: Props): React.ReactElement => {
     );
 
     const withProgressText = useMemo(() => {
-        return new URLSearchParams(window.location.search).get("value") !== null;
+        return (
+            new URLSearchParams(window.location.search).get("value") !== null
+        );
     }, []);
 
     const total = useMemo(
@@ -57,9 +70,10 @@ const Progress = ({ districts }: Props): React.ReactElement => {
     );
 
     return (
-
-            <div className={"progress-wrapper"}><span className={"progress-title"}>Aktueller Fortschritt:</span>
-                <ProgressContainer>
+        <div className={"progress-wrapper"}>
+            <span className={"progress-title"}>Aktueller Fortschritt:</span>
+            <ProgressContainer>
+                <ProgressTypesContainer>
                     <ProgressDistrict
                         title={"Dorf"}
                         value={dorf.value}
@@ -70,17 +84,22 @@ const Progress = ({ districts }: Props): React.ReactElement => {
                         value={bauernschaften.value}
                         total={bauernschaften.total}
                     />
-                    <ProgressDistrict
-                        title={"Gesamt"}
-                        value={total.value}
-                        total={total.total}
-                    />
-                </ProgressContainer>
-                <div className={"progress-div"}>
-                    <ProgressBar now={total.value} max={total.total} />
-                    {withProgressText && <span className={"progress-value"}>{(total.value/total.total*100).toFixed(1)} %</span>}
-                </div></div>
-
+                </ProgressTypesContainer>
+                <ProgressDistrict
+                    title={"Gesamt"}
+                    value={total.value}
+                    total={total.total}
+                />
+            </ProgressContainer>
+            <div className={"progress-div"}>
+                <ProgressBar now={total.value} max={total.total} />
+                {withProgressText && (
+                    <span className={"progress-value"}>
+                        {((total.value / total.total) * 100).toFixed(1)} %
+                    </span>
+                )}
+            </div>
+        </div>
     );
 };
 
