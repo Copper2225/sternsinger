@@ -61,9 +61,9 @@ const Progress = ({ districts }: Props): React.ReactElement => {
             <div className={"progress-wrapper"}><span className={"progress-title"}>Aktueller Fortschritt:</span>
                 <ProgressContainer>
                     <ProgressDistrict
-                        title={"Gesamt"}
-                        value={total.value}
-                        total={total.total}
+                        title={"Dorf"}
+                        value={dorf.value}
+                        total={dorf.total}
                     />
                     <ProgressDistrict
                         title={"Bauernschaften"}
@@ -71,9 +71,9 @@ const Progress = ({ districts }: Props): React.ReactElement => {
                         total={bauernschaften.total}
                     />
                     <ProgressDistrict
-                        title={"Dorf"}
-                        value={dorf.value}
-                        total={dorf.total}
+                        title={"Gesamt"}
+                        value={total.value}
+                        total={total.total}
                     />
                 </ProgressContainer>
                 <div className={"progress-div"}>
