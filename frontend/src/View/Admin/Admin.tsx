@@ -76,7 +76,7 @@ const Admin: React.FC = () => {
     return (
         <div className={"d-flex admin-div"} style={{ padding: 4 }}>
             {showFrame && <div className={"frame-div p-2 align-content-center"}>
-                <iframe style={{aspectRatio: 16 / 9}} className={"border-2 border-black border"} src={"/"} />
+                <iframe style={{aspectRatio: 16 / 9}} className={"border-2 border-black border"} src={"/show"} />
             </div>}
             <div className={"w-100"}>
                 <h1>Admin Page</h1>
