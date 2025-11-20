@@ -23,7 +23,8 @@ import "./teamLeader.css";
 import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
 import Cookies from "js-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane, faRotateRight } from "@fortawesome/free-solid-svg-icons";
+import {faFilm, faPaperPlane, faRotateRight} from "@fortawesome/free-solid-svg-icons";
+import NextModal from "src/View/TeamLeader/NextModal";
 
 const TeamLeader = () => {
     const loadDistricts = useLoadDistricts();
@@ -31,6 +32,7 @@ const TeamLeader = () => {
     const [selectedDistrict, setSelectedDistrict] = useState<District>();
     const [selectedIndex, setSelectedIndex] = useState<number>();
     const [lockDistrict, setLockDistrict] = useState<boolean>(false);
+    const [nextModal, setNextModal] = useState(false);
     const backendURL = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
@@ -142,6 +144,10 @@ const TeamLeader = () => {
 
     return (
         <div className={"h-100 d-flex flex-column p-2"}>
+            <Button className={"my-2"} onClick={() => setNextModal(true)}>
+                <FontAwesomeIcon icon={faFilm} size={"3x"}/>
+            </Button>
+            <NextModal show={nextModal} setShow={setNextModal} />
             <div className={"d-flex gap-3 mb-3"}>
                 <FormSelect
                     value={selectedIndex}
@@ -194,7 +200,7 @@ const TeamLeader = () => {
                                 <StatusIcon
                                     colored={false}
                                     status={value}
-                                    size={"4x"}
+                                    size={"3x"}
                                 />
                             </Button>
                         );
