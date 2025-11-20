@@ -23,10 +23,7 @@ import "./teamLeader.css";
 import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
 import Cookies from "js-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faPaperPlane,
-    faRotateRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 
 const TeamLeader = () => {
     const loadDistricts = useLoadDistricts();
@@ -41,14 +38,16 @@ const TeamLeader = () => {
             .then((response) => response.json())
             .then((data) => {
                 const index = Number(Cookies.get("district"));
-                console.log(data[index]);
-                setSelectedIndex(index);
-                setSelectedDistrict({
-                    ...data[index],
-                    status: data[index].status ?? DistrictStatusText.notPlanned,
-                });
+                if (!isNaN(index)) {
+                    setSelectedIndex(index);
+                    setSelectedDistrict({
+                        ...data[index],
+                        status:
+                            data[index].status ?? DistrictStatusText.notPlanned,
+                    });
+                    setLockDistrict(true);
+                }
                 setDistricts(data);
-                setLockDistrict(true);
             })
             .catch((error) =>
                 console.error("Error fetching districts:", error),
@@ -132,10 +131,7 @@ const TeamLeader = () => {
             })
                 .then((response) => response.json())
                 .then((data) =>
-                    console.log(
-                        `Updated ${selectedDistrict?.name}`,
-                        data,
-                    ),
+                    console.log(`Updated ${selectedDistrict?.name}`, data),
                 )
                 .catch((error) =>
                     console.error("Error updating district:", error),
@@ -169,9 +165,12 @@ const TeamLeader = () => {
                 </Button>
             </div>
             <Form onSubmit={handleContactSubmit}>
-                <FormLabel  htmlFor={"teamContact"}>Teamleiter</FormLabel>
+                <FormLabel htmlFor={"teamContact"}>Teamleiter</FormLabel>
                 <div className={"d-flex gap-3"}>
-                    <FormControl defaultValue={selectedDistrict?.contact} name={"teamContact"} />
+                    <FormControl
+                        defaultValue={selectedDistrict?.contact}
+                        name={"teamContact"}
+                    />
                     <Button name={"contact"} type="submit">
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </Button>
