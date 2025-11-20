@@ -7,7 +7,6 @@ import "./index.css";
 import App from "src/View/Show/App";
 import Admin from "src/View/Admin/Admin";
 import Help from "src/View/Help/Help";
-import TeamLeader from "src/View/TeamLeader/TeamLeader";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
@@ -15,7 +14,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             <BrowserRouter>
                 <Routes>
                     <Route path="/show" element={<App />} />
-                    <Route path="/" element={<TeamLeader />} />
+                    <Route path="/" element={<App />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/help" element={<Help />} />
                 </Routes>

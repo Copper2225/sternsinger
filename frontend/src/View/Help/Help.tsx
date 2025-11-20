@@ -30,18 +30,18 @@ const Help = () => {
                 <code>
 {`[
     {
-        "name": "Dorf #1",
+        "name": "Dorf #1"
     },
     {
         "name": "Überwasser",
         "bauernschaft": true,
-        "money": 356.12 // Optional
+        "money": 356.12
     },
     {
         "name": "Sonstiges",
         "counting": false,
         "bauernschaft": false,
-        "status": "walking" // Optional, siehe unten
+        "status": "walking"
     },
     ...
 ]`}
