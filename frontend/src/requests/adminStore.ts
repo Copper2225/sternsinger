@@ -14,6 +14,7 @@ export interface District {
     counting: boolean;
     money?: number;
     status?: DistrictStatusText;
+    contact?: string;
 }
 
 interface Bauernschaft {

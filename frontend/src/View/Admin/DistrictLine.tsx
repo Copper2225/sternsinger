@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {District, DistrictStatusText} from "src/requests/adminStore";
 import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
-import {Button} from "react-bootstrap";
+import {Button, OverlayTrigger, Tooltip, TooltipProps} from "react-bootstrap";
 import StatusChangeModal from "src/View/Admin/StatusChangeModal";
 
 interface Props {
@@ -66,6 +66,12 @@ const DistrictLine = ({
         }
     }, [district.status])
 
+    const contactTooltip = (props: TooltipProps) => (
+        <Tooltip id="button-tooltip" {...props}>
+            {district.contact ?? "???"}
+        </Tooltip>
+    );
+
     return (
         <tr style={{ height: "10px" }}>
             <td style={{ padding: "10px 0" }}>
@@ -74,7 +80,11 @@ const DistrictLine = ({
                 </Button>
             </td>
             <td style={{ padding: "10px 5px" }}>
-                <label style={{ fontSize: "larger" }}>{district.name}:</label>
+                <OverlayTrigger
+                    placement="top"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={contactTooltip}
+                ><label style={{ fontSize: "larger" }}>{district.name}:</label></OverlayTrigger>
             </td>
             <td style={{ padding: "10px 0", width: "200px" }}>
                 <input
