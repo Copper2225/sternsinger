@@ -252,6 +252,9 @@ const MapComponent = ({index, district}: Props) => {
 
         // Render existing markers from the district on map load
         map.on("load", () => {
+            // Ensure we start with a clean marker state when (re)loading the map
+            markersRef.current.forEach(({ mapMarker }) => mapMarker.remove());
+            markersRef.current.clear();
             initialMarkers.forEach((value, key) => {
                 if (
                     value
@@ -316,10 +319,13 @@ const MapComponent = ({index, district}: Props) => {
         });
 
         return () => {
+            // Remove all existing markers and clear local state on teardown
+            markersRef.current.forEach(({ mapMarker }) => mapMarker.remove());
+            markersRef.current.clear();
             map.remove();
             mapRef.current = null;
         };
-    }, [addMarker, centerLngLat, initialMarkers, renderMarkerPopupContent, handleSave, updateMarkerColor, showAddConfirmPopup]);
+    }, [addMarker, centerLngLat, initialMarkers, renderMarkerPopupContent, handleSave, updateMarkerColor, showAddConfirmPopup, district]);
 
     return (
         <>
