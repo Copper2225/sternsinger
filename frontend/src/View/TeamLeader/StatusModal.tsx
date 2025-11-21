@@ -1,14 +1,15 @@
 import { District, DistrictStatusText } from "src/requests/adminStore";
-import {Button, Modal} from "react-bootstrap";
+import {Button, Modal, ModalBody, ModalHeader, ModalTitle} from "react-bootstrap";
 import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
 import React, {Dispatch, SetStateAction, useCallback} from "react";
 
 interface Props {
-    district: District;
-    index: number;
+    district: District | undefined;
+    index: number | undefined;
     setDistricts: Dispatch<SetStateAction<District[]>>;
     setSelectedDistrict: (district: District) => void;
-    currentStatus: DistrictStatusText;
+    setShow: Dispatch<SetStateAction<boolean>>;
+    show: boolean
 }
 
 const StatusModal = ({
@@ -16,7 +17,8 @@ const StatusModal = ({
     index,
     setDistricts,
     setSelectedDistrict,
-    currentStatus,
+    show,
+    setShow,
 }: Props) => {
     const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -55,38 +57,44 @@ const StatusModal = ({
                     return newValues;
                 });
             }
+            setShow(false);
         },
-        [backendURL, district, index, setDistricts, setSelectedDistrict],
+        [backendURL, district, index, setDistricts, setSelectedDistrict, setShow],
     );
 
 
     return (
-        <Modal>
-            <h3 className={"py-2"}>Status</h3>
-            {index !== undefined && (
-                <div className={"d-flex flex-column gap-3 flex-grow-1"}>
-                    {Object.values(DistrictStatusText).map((value) => {
-                        return (
-                            <Button
-                                variant={
-                                    currentStatus === value
-                                        ? "secondary"
-                                        : "primary"
-                                }
-                                className={"w-100 h-100"}
-                                key={value}
-                                onClick={() => handleSubmit(value)}
-                            >
-                                <StatusIcon
-                                    colored={false}
-                                    status={value}
-                                    size={"3x"}
-                                />
-                            </Button>
-                        );
-                    })}
-                </div>
-            )}
+        <Modal show={show} onHide={() => setShow(false)} centered>
+            <ModalHeader closeButton>
+                <ModalTitle>Change Status</ModalTitle>
+            </ModalHeader>
+            <ModalBody>
+                {index !== undefined && (
+                    <div className={"d-flex flex-column gap-3 flex-grow-1"}>
+                        {Object.values(DistrictStatusText).map((value) => {
+                            return (
+                                <Button
+                                    variant={
+                                        district?.status === value
+                                            ? "secondary"
+                                            : "primary"
+                                    }
+                                    className={"w-100 h-100"}
+                                    key={value}
+                                    onClick={() => handleSubmit(value)}
+                                >
+                                    <StatusIcon
+                                        colored={false}
+                                        status={value}
+                                        size={"3x"}
+                                    />
+                                </Button>
+                            );
+                        })}
+                    </div>
+                )}
+            </ModalBody>
+
         </Modal>
     );
 };

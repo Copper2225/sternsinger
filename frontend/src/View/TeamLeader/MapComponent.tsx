@@ -303,13 +303,6 @@ const MapComponent = ({index, district}: Props) => {
                     renderedMarkers.forEach((m) => bounds.extend([m.lng, m.lat]));
                     map.fitBounds(bounds, { padding: 60, maxZoom: 18, duration: 500 });
                 }
-            } else {
-                // If there are no markers, try to center on the user's current location
-                try {
-                    geolocate.trigger();
-                } catch {
-                    // ignore if permissions are denied or unsupported
-                }
             }
         });
 

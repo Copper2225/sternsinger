@@ -33,7 +33,7 @@ const NextModal = ({show, setShow}: Props) => {
         navigate(`/show?${searchParams}`)
     }, [navigate]);
 
-    return (<Modal show={show} onHide={handleClose}>
+    return (<Modal show={show} onHide={handleClose} centered>
         <ModalHeader closeButton>
             <ModalTitle>Go to Show Screen</ModalTitle>
         </ModalHeader>
