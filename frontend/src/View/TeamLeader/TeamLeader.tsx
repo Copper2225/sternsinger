@@ -20,11 +20,15 @@ import {
     FormSelect,
 } from "react-bootstrap";
 import "./teamLeader.css";
-import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
 import Cookies from "js-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faFilm, faPaperPlane, faRotateRight} from "@fortawesome/free-solid-svg-icons";
+import {
+    faFilm,
+    faPaperPlane,
+    faRotateRight,
+} from "@fortawesome/free-solid-svg-icons";
 import NextModal from "src/View/TeamLeader/NextModal";
+import MapComponent from "src/View/TeamLeader/MapComponent";
 
 const TeamLeader = () => {
     const loadDistricts = useLoadDistricts();
@@ -55,45 +59,6 @@ const TeamLeader = () => {
                 console.error("Error fetching districts:", error),
             );
     }, [backendURL, loadDistricts, setDistricts]);
-
-    const handleSubmit = useCallback(
-        (value: DistrictStatusText) => {
-            if (selectedIndex !== undefined && selectedDistrict) {
-                fetch(`${backendURL}/district`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        index: selectedIndex,
-                        value: { ...selectedDistrict, status: value },
-                    }),
-                })
-                    .then((response) => response.json())
-                    .then((data) =>
-                        console.log(
-                            `Updated district ${selectedIndex + 1}`,
-                            data,
-                        ),
-                    )
-                    .catch((error) =>
-                        console.error("Error updating district:", error),
-                    );
-
-                setDistricts((prevValues) => {
-                    const newValues = [...prevValues];
-                    const updatedDistrict = {
-                        ...selectedDistrict,
-                        status: value,
-                    };
-                    newValues[selectedIndex] = updatedDistrict;
-
-                    setSelectedDistrict(updatedDistrict);
-
-                    return newValues;
-                });
-            }
-        },
-        [backendURL, selectedDistrict, selectedIndex, setDistricts],
-    );
 
     const handleChangeDistrict = useCallback(
         (event: ChangeEvent<HTMLSelectElement>) => {
@@ -145,7 +110,7 @@ const TeamLeader = () => {
     return (
         <div className={"h-100 d-flex flex-column p-2"}>
             <Button className={"my-2"} onClick={() => setNextModal(true)}>
-                <FontAwesomeIcon icon={faFilm} size={"3x"}/>
+                <FontAwesomeIcon icon={faFilm} size={"3x"} />
             </Button>
             <NextModal show={nextModal} setShow={setNextModal} />
             <div className={"d-flex gap-3 mb-3"}>
@@ -182,30 +147,8 @@ const TeamLeader = () => {
                     </Button>
                 </div>
             </Form>
-            <h3 className={"py-2"}>Status</h3>
-            {selectedIndex !== undefined && (
-                <div className={"d-flex flex-column gap-3 flex-grow-1"}>
-                    {Object.values(DistrictStatusText).map((value) => {
-                        return (
-                            <Button
-                                variant={
-                                    selectedDistrict?.status === value
-                                        ? "secondary"
-                                        : "primary"
-                                }
-                                className={"w-100 h-100"}
-                                key={value}
-                                onClick={() => handleSubmit(value)}
-                            >
-                                <StatusIcon
-                                    colored={false}
-                                    status={value}
-                                    size={"3x"}
-                                />
-                            </Button>
-                        );
-                    })}
-                </div>
+            {selectedIndex !== undefined && selectedDistrict && (
+                <MapComponent district={selectedDistrict} index={selectedIndex} />
             )}
         </div>
     );

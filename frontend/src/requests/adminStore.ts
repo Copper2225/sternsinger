@@ -8,6 +8,13 @@ export enum DistrictStatusText {
     finished = "finished",
 }
 
+export interface DistrictMarker {
+    notes: string;
+    done: boolean;
+    lat: number;
+    lng: number;
+}
+
 export interface District {
     name: string;
     bauernschaft: boolean;
@@ -15,6 +22,7 @@ export interface District {
     money?: number;
     status?: DistrictStatusText;
     contact?: string;
+    markers?: Map<string, DistrictMarker> | Record<string, DistrictMarker>;
 }
 
 interface Bauernschaft {

@@ -1,0 +1,346 @@
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import { v4 as uuidv4 } from "uuid";
+import {District, DistrictMarker} from "src/requests/adminStore";
+
+interface Props {
+    index: number;
+    district: District;
+}
+
+const MapComponent = ({index, district}: Props) => {
+    const mapContainerRef = useRef<HTMLDivElement>(null);
+    const mapRef = useRef<mapboxgl.Map | null>(null);
+    const backendURL = import.meta.env.VITE_BACKEND_URL;
+
+    const initialMarkers = useMemo(() => {
+        const src = district.markers as unknown;
+        if (src instanceof Map) return new Map<string, DistrictMarker>(src);
+        if (src && typeof src === "object") {
+            const entries = Object.entries(src as Record<string, unknown>) as [string, DistrictMarker][];
+            return new Map<string, DistrictMarker>(entries);
+        }
+        return new Map<string, DistrictMarker>();
+    }, [district.markers]);
+
+    type RenderedMarker = DistrictMarker & { mapMarker: mapboxgl.Marker };
+    const markersRef = useRef<Map<string, RenderedMarker>>(new Map());
+
+    const defaultMarkerColor = "#3FB1CE";
+    const doneMarkerColor = "#2ecc71";
+
+    const envToken = import.meta.env.VITE_MAPBOX_KEY as string | undefined;
+    mapboxgl.accessToken = envToken || "pk.eyJ1IjoiY29wcGVyMjIyNSIsImEiOiJjbWk4cmQzam0wM2R2MmxzNG9pNnBzazFuIn0.gzf-eE3cvtEqUAS8I6YDng";
+
+    const centerLngLat = useMemo<[number, number]>(() => [7.841325, 52.040678], []); // [lng, lat] for Mapbox
+    const mapZoom = 14.6;
+
+    const updateMarkerColor = useCallback((key: string) => {
+        const current = markersRef.current.get(key);
+        if (current) {
+            // Fallback: try to recolor the embedded SVG path fill if present
+            const el = current.mapMarker.getElement();
+            const path = el?.querySelector?.("path") as SVGPathElement | null;
+            if (path) {
+                path.setAttribute("fill", current.done ? doneMarkerColor : defaultMarkerColor);
+            }
+        }
+    }, []);
+
+    const removeMarker = useCallback((key: string) => {
+        const instance = markersRef.current.get(key);
+        if (instance) {
+            instance.mapMarker.remove();
+            markersRef.current.delete(key);
+        }
+    }, []);
+
+    const handleSave = useCallback(() => {
+        if (markersRef.current) {
+            const serializable = Object.fromEntries(
+                Array.from(markersRef.current.entries()).map(([k, m]) => [
+                    k,
+                    { lat: m.lat, lng: m.lng, notes: m.notes, done: m.done },
+                ]),
+            );
+            fetch(`${backendURL}/district`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    index: index,
+                    value: {
+                        ...district,
+                        markers: serializable,
+                    },
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) =>
+                    console.log(`Updated ${district?.name}`, data),
+                )
+                .catch((error) =>
+                    console.error("Error updating district:", error),
+                );
+        }
+    }, [backendURL, district, index]);
+
+    const renderMarkerPopupContent = useCallback((key: string) => {
+        const container = document.createElement("div");
+        container.className = "d-flex flex-column";
+
+        const label = document.createElement("div");
+        label.textContent = "Marker";
+        container.appendChild(label);
+
+        const current = markersRef.current.get(key);
+
+        const notesLabel = document.createElement("label");
+        notesLabel.textContent = "Notizen";
+        notesLabel.className = "mt-2";
+        container.appendChild(notesLabel);
+
+        const textarea = document.createElement("textarea");
+        textarea.className = "form-control";
+        textarea.rows = 3;
+        textarea.value = current?.notes ?? "";
+        textarea.addEventListener("input", (e) => {
+            const instance = markersRef.current.get(key);
+            if (instance) {
+                instance.notes = (e.target as HTMLTextAreaElement).value;
+            }
+        });
+        // prevent map interactions while typing
+        ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
+            textarea.addEventListener(evt, (ev) => ev.stopPropagation());
+        });
+        container.appendChild(textarea);
+
+        const checkboxWrapper = document.createElement("div");
+        checkboxWrapper.className = "form-check mt-2";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "form-check-input";
+        checkbox.id = `done-${key}`;
+        checkbox.checked = Boolean(current?.done);
+        checkbox.addEventListener("change", () => {
+            const instance = markersRef.current.get(key);
+            if (instance) {
+                instance.done = checkbox.checked;
+                updateMarkerColor(key);
+            }
+        });
+        ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
+            checkbox.addEventListener(evt, (ev) => ev.stopPropagation());
+        });
+
+        const checkboxLabel = document.createElement("label");
+        checkboxLabel.className = "form-check-label";
+        checkboxLabel.htmlFor = `done-${key}`;
+        checkboxLabel.textContent = "Erledigt";
+
+        checkboxWrapper.appendChild(checkbox);
+        checkboxWrapper.appendChild(checkboxLabel);
+        container.appendChild(checkboxWrapper);
+
+        const button = document.createElement("button");
+        button.className = "btn btn-danger mt-2";
+        button.textContent = "Löschen";
+        button.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            removeMarker(key);
+            handleSave();
+        });
+        container.appendChild(button);
+
+        return container;
+    }, [removeMarker, handleSave, updateMarkerColor]);
+
+    const addMarker = useCallback((lat: number, lng: number) => {
+        const key = uuidv4();
+        if (!mapRef.current) return;
+        const popup = new mapboxgl.Popup({ offset: 16 }).setDOMContent(renderMarkerPopupContent(key));
+        popup.on("close", () => {
+            handleSave();
+        });
+        const marker = new mapboxgl.Marker({ color: defaultMarkerColor })
+            .setLngLat([lng, lat])
+            .setPopup(popup)
+            .addTo(mapRef.current);
+
+        const markerElement = marker.getElement();
+        markerElement.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            marker.togglePopup();
+        });
+        ["mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
+            markerElement.addEventListener(evt, (ev) => {
+                ev.stopPropagation();
+            });
+        });
+
+        markersRef.current.set(key, { mapMarker: marker, lat, lng, notes: "", done: false });
+        updateMarkerColor(key);
+        handleSave();
+    }, [renderMarkerPopupContent, handleSave, updateMarkerColor]);
+
+    const showAddConfirmPopup = useCallback((lat: number, lng: number) => {
+        if (!mapRef.current) return;
+        const container = document.createElement("div");
+        container.className = "d-flex flex-column";
+        const text = document.createElement("div");
+        text.textContent = "Marker hier hinzufügen?";
+        container.appendChild(text);
+
+        const btns = document.createElement("div");
+        btns.className = "d-flex gap-2 mt-2";
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.className = "btn btn-primary btn-sm";
+        confirmBtn.textContent = "Hinzufügen";
+
+        const cancelBtn = document.createElement("button");
+        cancelBtn.className = "btn btn-secondary btn-sm";
+        cancelBtn.textContent = "Abbrechen";
+
+        btns.appendChild(confirmBtn);
+        btns.appendChild(cancelBtn);
+        container.appendChild(btns);
+
+        const popup = new mapboxgl.Popup({ offset: 12, closeOnClick: true })
+            .setLngLat([lng, lat])
+            .setDOMContent(container)
+            .addTo(mapRef.current);
+
+        const stop = (ev: Event) => ev.stopPropagation();
+        ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
+            container.addEventListener(evt, stop);
+            confirmBtn.addEventListener(evt, stop);
+            cancelBtn.addEventListener(evt, stop);
+        });
+
+        confirmBtn.addEventListener("click", () => {
+            popup.remove();
+            addMarker(lat, lng);
+        });
+        cancelBtn.addEventListener("click", () => {
+            popup.remove();
+        });
+    }, [addMarker]);
+
+    useEffect(() => {
+        if (!mapContainerRef.current) return;
+
+        const map = new mapboxgl.Map({
+            container: mapContainerRef.current,
+            style: "mapbox://styles/mapbox/streets-v11",
+            center: centerLngLat,
+            zoom: mapZoom,
+            maxZoom: 30,
+        });
+        mapRef.current = map;
+
+        map.addControl(new mapboxgl.NavigationControl(), "top-left");
+        const geolocate = new mapboxgl.GeolocateControl({
+            positionOptions: { enableHighAccuracy: true },
+            trackUserLocation: true,
+            showAccuracyCircle: false,
+            showUserHeading: true,
+        });
+        map.addControl(geolocate, "top-left");
+
+        // Render existing markers from the district on map load
+        map.on("load", () => {
+            initialMarkers.forEach((value, key) => {
+                if (
+                    value
+                ) {
+                    const popup = new mapboxgl.Popup({ offset: 16 }).setDOMContent(renderMarkerPopupContent(key));
+                    popup.on("close", () => {
+                        handleSave();
+                    });
+                    const marker = new mapboxgl.Marker({ color: (value.done ? doneMarkerColor : defaultMarkerColor) })
+                        .setLngLat([value.lng, value.lat])
+                        .setPopup(popup)
+                        .addTo(map);
+
+                    const markerElement = marker.getElement();
+                    markerElement.addEventListener("click", (ev) => {
+                        ev.stopPropagation();
+                        marker.togglePopup();
+                    });
+                    ["mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
+                        markerElement.addEventListener(evt, (ev) => {
+                            ev.stopPropagation();
+                        });
+                    });
+
+                    markersRef.current.set(key, {
+                        mapMarker: marker,
+                        lat: value.lat,
+                        lng: value.lng,
+                        notes: value.notes ?? "",
+                        done: Boolean(value.done),
+                    });
+                    updateMarkerColor(key);
+                }
+            });
+            // After rendering all existing markers, fit the map to show all of them
+            const renderedMarkers = Array.from(markersRef.current.values());
+            if (renderedMarkers.length > 0) {
+                if (renderedMarkers.length === 1) {
+                    const only = renderedMarkers[0];
+                    map.setCenter([only.lng, only.lat]);
+                    // Keep current zoom if it's already close; otherwise zoom in moderately
+                    const currentZoom = map.getZoom();
+                    if (currentZoom < 16) {
+                        map.setZoom(16);
+                    }
+                } else {
+                    const bounds = new mapboxgl.LngLatBounds();
+                    renderedMarkers.forEach((m) => bounds.extend([m.lng, m.lat]));
+                    map.fitBounds(bounds, { padding: 60, maxZoom: 18, duration: 500 });
+                }
+            } else {
+                // If there are no markers, try to center on the user's current location
+                try {
+                    geolocate.trigger();
+                } catch {
+                    // ignore if permissions are denied or unsupported
+                }
+            }
+        });
+
+        map.on("click", (e) => {
+            // Ignore clicks originating from markers or popups
+            const target = (e.originalEvent as MouseEvent | TouchEvent)
+                .target as HTMLElement | null;
+            if (target && (target.closest(".mapboxgl-marker") || target.closest(".mapboxgl-popup"))) {
+                return;
+            }
+            showAddConfirmPopup(e.lngLat.lat, e.lngLat.lng);
+        });
+
+        return () => {
+            map.remove();
+            mapRef.current = null;
+        };
+    }, [addMarker, centerLngLat, initialMarkers, renderMarkerPopupContent, handleSave, updateMarkerColor, showAddConfirmPopup]);
+
+    return (
+        <>
+            <h3 className={"py-2"}>Karte</h3>
+            <div className={"map-wrapper mb-3 h-100"}>
+                <div
+                    ref={mapContainerRef}
+                    className={"leaflet-map h-100"}
+                    style={{ width: "100%" }}
+                />
+            </div>
+        </>
+    );
+};
+
+export default MapComponent;
