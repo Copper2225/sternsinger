@@ -22,5 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-*.env.development
-*.env.production
+!/frontend/.env.development
+!/frontend/.env.production
