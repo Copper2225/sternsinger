@@ -30,8 +30,7 @@ const MapComponent = ({index, district}: Props) => {
     const defaultMarkerColor = "#3FB1CE";
     const doneMarkerColor = "#2ecc71";
 
-    const envToken = import.meta.env.VITE_MAPBOX_KEY as string | undefined;
-    mapboxgl.accessToken = envToken || "pk.eyJ1IjoiY29wcGVyMjIyNSIsImEiOiJjbWk4cmQzam0wM2R2MmxzNG9pNnBzazFuIn0.gzf-eE3cvtEqUAS8I6YDng";
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_KEY as string | undefined;
 
     const centerLngLat = useMemo<[number, number]>(() => [7.841325, 52.040678], []); // [lng, lat] for Mapbox
     const mapZoom = 14.6;
