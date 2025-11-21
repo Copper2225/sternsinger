@@ -250,6 +250,71 @@ const MapComponent = ({index, district}: Props) => {
         });
         map.addControl(geolocate, "top-left");
 
+        // Style toggle control (streets <-> satellite)
+        {
+            let container: HTMLDivElement | null = null;
+            let currentStyle: "streets" | "satellite" = "streets";
+            const styleToggleControl: mapboxgl.IControl = {
+                onAdd: (mapInstance) => {
+                    container = document.createElement("div");
+                    container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
+                    const streetsBtn = document.createElement("button");
+                    streetsBtn.type = "button";
+                    streetsBtn.title = "Karte";
+                    streetsBtn.textContent = "Karte";
+                    const satelliteBtn = document.createElement("button");
+                    satelliteBtn.type = "button";
+                    satelliteBtn.title = "Satellit";
+                    satelliteBtn.textContent = "Satellit";
+                    const stop = (ev: Event) => ev.stopPropagation();
+                    [container, streetsBtn, satelliteBtn].forEach((el) => {
+                        ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) =>
+                            el.addEventListener(evt, stop),
+                        );
+                    });
+
+                    const setActive = (styleName: "streets" | "satellite") => {
+                        currentStyle = styleName;
+                        if (styleName === "streets") {
+                            streetsBtn.classList.add("active");
+                            satelliteBtn.classList.remove("active");
+                        } else {
+                            satelliteBtn.classList.add("active");
+                            streetsBtn.classList.remove("active");
+                        }
+                    };
+
+                    streetsBtn.addEventListener("click", () => {
+                        if (currentStyle !== "streets") {
+                            handleSave();
+                            mapInstance.setStyle("mapbox://styles/mapbox/streets-v11");
+                            setActive("streets");
+                        }
+                    });
+
+                    satelliteBtn.addEventListener("click", () => {
+                        if (currentStyle !== "satellite") {
+                            handleSave();
+                            mapInstance.setStyle("mapbox://styles/mapbox/satellite-streets-v12");
+                            setActive("satellite");
+                        }
+                    });
+
+                    container.appendChild(streetsBtn);
+                    container.appendChild(satelliteBtn);
+                    setActive("streets");
+                    return container;
+                },
+                onRemove: () => {
+                    if (container && container.parentNode) {
+                        container.parentNode.removeChild(container);
+                    }
+                    container = null;
+                },
+            };
+            map.addControl(styleToggleControl, "top-right");
+        }
+
         // Render existing markers from the district on map load
         map.on("load", () => {
             // Ensure we start with a clean marker state when (re)loading the map
