@@ -24,28 +24,57 @@ const MapComponent = ({index, district}: Props) => {
         return new Map<string, DistrictMarker>();
     }, [district.markers]);
 
-    type RenderedMarker = DistrictMarker & { mapMarker: mapboxgl.Marker };
+    type RenderedMarker = DistrictMarker & { mapMarker: mapboxgl.Marker; originalHTML: string };
     const markersRef = useRef<Map<string, RenderedMarker>>(new Map());
 
     const defaultMarkerColor = "#3FB1CE";
-    const doneMarkerColor = "#2ecc71";
+    const notesColor = "#DDAA33";
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_KEY as string | undefined;
 
-    const centerLngLat = useMemo<[number, number]>(() => [7.841325, 52.040678], []); // [lng, lat] for Mapbox
+    const centerLngLat = useMemo<[number, number]>(() => [7.841325, 52.040678], []);
     const mapZoom = 14.6;
+
+    const createDoneMarkerElement = useCallback(() => {
+        const el = document.createElement("div");
+        el.style.width = "20px";
+        el.style.height = "20px";
+        el.style.borderRadius = "50%";
+        el.style.background = "var(--bs-success)";
+        el.style.display = "flex";
+        el.style.alignItems = "center";
+        el.style.justifyContent = "center";
+        el.style.color = "white";
+        el.style.fontSize = "14px";
+        el.style.lineHeight = "1";
+        el.style.boxShadow = "0 0 0 2px #ffffff";
+        el.textContent = "✓";
+        return el;
+    }, []);
 
     const updateMarkerColor = useCallback((key: string) => {
         const current = markersRef.current.get(key);
         if (current) {
-            // Fallback: try to recolor the embedded SVG path fill if present
             const el = current.mapMarker.getElement();
-            const path = el?.querySelector?.("path") as SVGPathElement | null;
-            if (path) {
-                path.setAttribute("fill", current.done ? doneMarkerColor : defaultMarkerColor);
+
+            if (current.done) {
+                const doneMarkerElement = createDoneMarkerElement();
+                // Replace inner content with the "done" badge while keeping the outer marker element and listeners
+                el.innerHTML = "";
+                el.appendChild(doneMarkerElement);
+            } else {
+                // Restore original default marker HTML and then recolor based on notes
+                if (current.originalHTML) {
+                    el.innerHTML = current.originalHTML;
+                }
+                const path = el?.querySelector?.("path") as SVGPathElement | null;
+                if (path) {
+                    const newFill = current.notes.trim().length > 0 ? notesColor : defaultMarkerColor;
+                    path.setAttribute("fill", newFill);
+                }
             }
         }
-    }, []);
+    }, [createDoneMarkerElement]);
 
     const removeMarker = useCallback((key: string) => {
         const instance = markersRef.current.get(key);
@@ -75,9 +104,6 @@ const MapComponent = ({index, district}: Props) => {
                 }),
             })
                 .then((response) => response.json())
-                .then((data) =>
-                    console.log(`Updated ${district?.name}`, data),
-                )
                 .catch((error) =>
                     console.error("Error updating district:", error),
                 );
@@ -127,7 +153,6 @@ const MapComponent = ({index, district}: Props) => {
             const instance = markersRef.current.get(key);
             if (instance) {
                 instance.done = checkbox.checked;
-                updateMarkerColor(key);
             }
         });
         ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
@@ -155,14 +180,22 @@ const MapComponent = ({index, district}: Props) => {
         container.appendChild(button);
 
         return container;
-    }, [removeMarker, handleSave, updateMarkerColor]);
+    }, [removeMarker, handleSave]);
 
     const addMarker = useCallback((lat: number, lng: number) => {
         const key = uuidv4();
         if (!mapRef.current) return;
-        const popup = new mapboxgl.Popup({ offset: 16 }).setDOMContent(renderMarkerPopupContent(key));
+        const popup = new mapboxgl.Popup({ offset: 16 });
+        let wasOpened = false;
+        popup.on("open", () => {
+            wasOpened = true;
+            popup.setDOMContent(renderMarkerPopupContent(key));
+        });
         popup.on("close", () => {
-            handleSave();
+            if (wasOpened) {
+                handleSave();
+                updateMarkerColor(key);
+            }
         });
         const marker = new mapboxgl.Marker({ color: defaultMarkerColor })
             .setLngLat([lng, lat])
@@ -180,7 +213,8 @@ const MapComponent = ({index, district}: Props) => {
             });
         });
 
-        markersRef.current.set(key, { mapMarker: marker, lat, lng, notes: "", done: false });
+        const originalHTML = markerElement.innerHTML;
+        markersRef.current.set(key, { mapMarker: marker, lat, lng, notes: "", done: false, originalHTML });
         updateMarkerColor(key);
         handleSave();
     }, [renderMarkerPopupContent, handleSave, updateMarkerColor]);
@@ -324,11 +358,19 @@ const MapComponent = ({index, district}: Props) => {
                 if (
                     value
                 ) {
-                    const popup = new mapboxgl.Popup({ offset: 16 }).setDOMContent(renderMarkerPopupContent(key));
-                    popup.on("close", () => {
-                        handleSave();
+                    const popup = new mapboxgl.Popup({ offset: 16 });
+                    let wasOpened = false;
+                    popup.on("open", () => {
+                        wasOpened = true;
+                        popup.setDOMContent(renderMarkerPopupContent(key));
                     });
-                    const marker = new mapboxgl.Marker({ color: (value.done ? doneMarkerColor : defaultMarkerColor) })
+                    popup.on("close", () => {
+                        if (wasOpened) {
+                            handleSave();
+                            updateMarkerColor(key)
+                        }
+                    });
+                    const marker = new mapboxgl.Marker({ color: (value.done ? notesColor : defaultMarkerColor) })
                         .setLngLat([value.lng, value.lat])
                         .setPopup(popup)
                         .addTo(map);
@@ -344,12 +386,14 @@ const MapComponent = ({index, district}: Props) => {
                         });
                     });
 
+                    const originalHTML = markerElement.innerHTML;
                     markersRef.current.set(key, {
                         mapMarker: marker,
                         lat: value.lat,
                         lng: value.lng,
                         notes: value.notes ?? "",
                         done: Boolean(value.done),
+                        originalHTML,
                     });
                     updateMarkerColor(key);
                 }
