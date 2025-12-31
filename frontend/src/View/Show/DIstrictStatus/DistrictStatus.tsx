@@ -20,7 +20,7 @@ const DistrictStatus = ({ districts }: Props): ReactElement => {
                         gridTemplateRows: `repeat(${Math.ceil(districts.length / 4)}, minmax(0, 1fr))`,
                     }}
                 >
-                    {districts.map((district) => (
+                    {districts.filter(dist => dist.counting).map((district) => (
                         <div className={"d-flex flex-row align-items-center status-item"}>
                             <StatusIcon status={district.status} />
                             <div className={""}>{district.name}</div>

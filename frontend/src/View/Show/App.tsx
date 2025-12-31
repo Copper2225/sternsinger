@@ -29,6 +29,11 @@ const App: React.FC = () => {
         return deacts;
     }, []);
 
+    const hideLogo = useMemo(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        return (searchParams.has("logo"));
+    }, []);
+
     useEffect(() => {
         if (deactivates.length < 2) {
             const interval = setInterval(() => {
@@ -100,7 +105,7 @@ const App: React.FC = () => {
                 </div>
             )}
 
-            <img src={bgImage} alt="Background" />
+            {!hideLogo && <img src={bgImage} alt="Background" />}
         </div>
     );
 };
