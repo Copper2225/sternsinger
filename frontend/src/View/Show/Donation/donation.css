@@ -21,6 +21,14 @@
     padding-bottom: calc(20vh + 10px);
 }
 
+/* Landscape mobile styles */
+@media screen and (orientation: landscape) and (max-height: 950px) {
+    .donation-wrapper {
+        font-size: 45px;
+        padding-top: 10vh;
+    }
+}
+
 /* Mobile styles */
 @media screen and (max-width: 768px) and (orientation: portrait) {
     .donation-wrapper {
@@ -34,6 +42,7 @@
     .donation-wrapper {
         font-size: 30px;
         padding-top: 10vh;
+        color: red;
     }
 
 }

@@ -30,7 +30,17 @@
     flex-direction: column;
 }
 
+/* Landscape mobile styles */
+@media screen and (orientation: landscape) and (max-height: 950px) {
+    .status-wrapper {
+        font-size: 14px;
+    }
 
+    .status-title {
+        margin-top: 3px;
+        margin-bottom: 3px;
+    }
+}
 
 /* Mobile styles */
 @media screen and (max-width: 768px) and (orientation: portrait) {

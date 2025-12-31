@@ -148,7 +148,7 @@ img {
 }
 
 /* Landscape mobile styles */
-@media screen and (orientation: landscape) and (max-height: 768px) {
+@media screen and (orientation: landscape) and (max-height: 600px) {
     img {
         max-width: 40vw;
         height: auto;

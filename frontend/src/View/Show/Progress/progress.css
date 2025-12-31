@@ -39,10 +39,35 @@
     margin-bottom: calc(20vh + 10px);
 }
 
+/* Landscape mobile styles */
+@media screen and (orientation: landscape) and (max-height: 950px) {
+    .progress-wrapper {
+        font-size: 45px;
+        margin-top: 5vh;
+    }
+
+    .progress-title {
+        font-size: 3em;
+    }
+
+    .progress-name {
+        font-size: 2em;
+    }
+
+    .progress-numbers {
+        font-size: 2.5em;
+    }
+
+    .progress {
+        height: 2em;
+    }
+}
+
 /* Mobile styles */
 @media screen and (max-width: 768px) and (orientation: portrait) {
     .progress-wrapper {
         font-size: 20px;
+        margin-top: 15vh;
     }
 
     .progress-title {
