@@ -15,10 +15,6 @@ const DistrictStatus = ({ districts }: Props): ReactElement => {
                 <span className={"status-title"}>Bezirke Status:</span>
                 <div
                     className={"status-grid h-100 w-100"}
-                    style={{
-                        gridTemplateColumns: `repeat(4, minmax(0, 1fr))`,
-                        gridTemplateRows: `repeat(${Math.ceil(districts.length / 4)}, minmax(0, 1fr))`,
-                    }}
                 >
                     {districts.filter(dist => dist.counting).map((district) => (
                         <div className={"d-flex flex-row align-items-center status-item"}>
