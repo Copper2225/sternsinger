@@ -101,7 +101,7 @@ const OverviewMap = () => {
                 }
                 const circle = el?.querySelector?.("circle") as SVGPathElement | null;
                 if (circle) {
-                    const newFill = current.notes.trim().length > 0 ? notesColor : "white";
+                    const newFill = current.notes.trim().length > 0 ? "orange" : "white";
                     circle.setAttribute("fill", newFill);
                 }
             }

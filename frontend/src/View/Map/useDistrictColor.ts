@@ -7,7 +7,7 @@ export function useDistrictColor() {
     return (districtName: string): string => {
         const index = districts.findIndex(d => d.name === districtName);
 
-        switch (index) {
+        switch (index%31) {
             case 0: return "#e6194b";    // red
             case 1: return "#3cb44b";    // green
             case 2: return "#ffe119";    // yellow
