@@ -108,14 +108,6 @@ const OverviewMap = () => {
         }
     }, [createDoneMarkerElement, getMarkerColor]);
 
-    const removeMarker = useCallback((key: string) => {
-        const instance = markersRef.current.get(key);
-        if (instance) {
-            instance.mapMarker.remove();
-            markersRef.current.delete(key);
-        }
-    }, []);
-
     const handleSave = useCallback(() => {
         if (!markersRef.current) return;
 
@@ -135,8 +127,9 @@ const OverviewMap = () => {
 
         const updatedDistricts = districts.map(d => ({
             ...d,
-            markers: markersByDistrict.get(d.name) ?? d.markers ?? {},
+            markers: markersByDistrict.get(d.name) ?? {},
         }));
+
 
         fetch(`${backendURL}/districts`, {
             method: "POST",
@@ -147,8 +140,17 @@ const OverviewMap = () => {
             .catch(error =>
                 console.error("Error updating districts:", error),
             );
-    }, [backendURL, districts]);
+    }, [backendURL, districts, markersRef]);
 
+    const removeMarker = useCallback((key: string) => {
+        const instance = markersRef.current.get(key);
+
+        if (instance) {
+            instance.mapMarker.remove();
+            markersRef.current.delete(key);
+            handleSave();
+        }
+    }, [handleSave]);
 
     const renderMarkerPopupContent = useCallback((key: string) => {
         const container = document.createElement("div");
@@ -214,12 +216,11 @@ const OverviewMap = () => {
             e.preventDefault();
             e.stopPropagation();
             removeMarker(key);
-            handleSave();
         });
         container.appendChild(button);
 
         return container;
-    }, [removeMarker, handleSave]);
+    }, [removeMarker]);
 
     const addMarker = useCallback((lat: number, lng: number, district: string) => {
         const key = uuidv4();
@@ -434,7 +435,7 @@ const OverviewMap = () => {
                     });
                     popup.on("close", () => {
                         if (wasOpened) {
-                            handleSave();
+                            // handleSave();
                             updateMarkerColor(key)
                         }
                     });
@@ -499,6 +500,7 @@ const OverviewMap = () => {
         return () => {
             // Remove all existing markers and clear local state on teardown
             markersRef.current.forEach(({ mapMarker }) => mapMarker.remove());
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             markersRef.current.clear();
             map.remove();
             mapRef.current = null;
