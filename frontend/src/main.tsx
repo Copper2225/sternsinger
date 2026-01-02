@@ -8,6 +8,7 @@ import App from "src/View/Show/App";
 import Admin from "src/View/Admin/Admin";
 import Help from "src/View/Help/Help";
 import TeamLeader from "src/View/TeamLeader/TeamLeader";
+import OverviewMap from "src/View/Map/OverviewMap";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                     <Route path="/" element={<TeamLeader />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/help" element={<Help />} />
+                    <Route path="/map" element={<OverviewMap />} />
                 </Routes>
             </BrowserRouter>
         </RecoilRoot>
