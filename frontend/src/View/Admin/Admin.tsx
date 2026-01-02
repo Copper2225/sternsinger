@@ -100,7 +100,7 @@ const Admin: React.FC = () => {
                 <h1>Admin Page</h1>
                 <div style={{ display: "flex", gap: 10 }}>
                     <ImportButton setState={handleOverwrite} />
-                    <ExportButton values={districts} name={"districts"} />
+                    <ExportButton values={districts} name={"districts.json"} />
                     <FormCheck
                         className={"text-center align-content-center"}
                         type={"switch"}
