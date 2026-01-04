@@ -40,6 +40,18 @@ wss.on("connection", (ws) => {
   // Send the current district values to the new client
   ws.send(JSON.stringify({ type: "districtUpdate", districtValues }));
 
+  // Handle WebSocket messages
+  ws.on("message", (data) => {
+    try {
+      const message = JSON.parse(data);
+      if (message.type === "ping") {
+        ws.send(JSON.stringify({ type: "pong" }));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
   ws.on("close", () => {
     console.log("Client disconnected");
   });
