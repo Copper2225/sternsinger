@@ -60,16 +60,47 @@ const App: React.FC = () => {
 
         setDistricts(loadDistricts);
 
-        const ws = new WebSocket(`${backendURL.replace(/^http/, "ws")}`);
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            if (message.type === "districtUpdate") {
-                setDistricts(message.districtValues);
-            }
+        let ws: WebSocket | null = null;
+        let reconnectTimeout: ReturnType<typeof setTimeout>;
+        let heartbeatInterval: ReturnType<typeof setInterval>;
+
+        const connect = () => {
+            ws = new WebSocket(`${backendURL.replace(/^http/, "ws")}`);
+
+            ws.onopen = () => {
+                console.log("WebSocket connected");
+                heartbeatInterval = setInterval(() => {
+                    if (ws?.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({ type: "ping" }));
+                    }
+                }, 30000); // 30 seconds
+            };
+
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                if (message.type === "districtUpdate") {
+                    setDistricts(message.districtValues);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log("WebSocket disconnected. Reconnecting in 5s...");
+                clearInterval(heartbeatInterval);
+                reconnectTimeout = setTimeout(connect, 5000);
+            };
+
+            ws.onerror = (error) => {
+                console.error("WebSocket error:", error);
+                ws?.close();
+            };
         };
 
+        connect();
+
         return () => {
-            ws.close();
+            ws?.close();
+            clearTimeout(reconnectTimeout);
+            clearInterval(heartbeatInterval);
         };
     }, [backendURL, loadDistricts, setDistricts]);
 
