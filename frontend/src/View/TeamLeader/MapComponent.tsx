@@ -437,16 +437,13 @@ const MapComponent = ({index, district}: Props) => {
     }, [addMarker, centerLngLat, initialMarkers, renderMarkerPopupContent, handleSave, updateMarkerColor, showAddConfirmPopup, district]);
 
     return (
-        <>
-            <h3 className={"py-2"}>Karte</h3>
-            <div className={"map-wrapper mb-3 h-100"}>
-                <div
-                    ref={mapContainerRef}
-                    className={"leaflet-map h-100"}
-                    style={{ width: "100%" }}
-                />
-            </div>
-        </>
+        <div className={"map-wrapper mb-3 h-100"}>
+            <div
+                ref={mapContainerRef}
+                className={"leaflet-map h-100"}
+                style={{ width: "100%" }}
+            />
+        </div>
     );
 };
 

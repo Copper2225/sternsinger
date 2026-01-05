@@ -14,7 +14,7 @@ import {
 import { useLoadDistricts } from "src/requests/useLoadDistricts";
 import {
     Button,
-    Form,
+    Form, FormCheck,
     FormControl,
     FormLabel,
     FormSelect,
@@ -42,6 +42,7 @@ const TeamLeader = () => {
     const [statusModal, setStatusModal] = useState(false);
     const [buttonTimeout, setButtonTimeout] = useState<boolean>();
     const backendURL = import.meta.env.VITE_BACKEND_URL;
+    const [showMap, setShowMap] = useState<boolean>(false);
 
     useEffect(() => {
         fetch(`${backendURL}/districts`)
@@ -62,6 +63,7 @@ const TeamLeader = () => {
             .catch((error) =>
                 console.error("Error fetching districts:", error),
             );
+        setShowMap(Cookies.get("showMap") === "true");
     }, [backendURL, loadDistricts, setDistricts]);
 
     const handleChangeDistrict = useCallback(
@@ -113,6 +115,11 @@ const TeamLeader = () => {
         },
         [backendURL, selectedDistrict, selectedIndex],
     );
+
+    const handleCheckedChange= useCallback((event: ChangeEvent<HTMLInputElement>) => {
+        setShowMap(event.target.checked);
+        Cookies.set("showMap", event.target.checked.toString());
+    }, [])
 
     return (
         <div className={"h-100 d-flex flex-column p-2"}>
@@ -178,10 +185,13 @@ const TeamLeader = () => {
                 </div>
             </Form>
             {selectedIndex !== undefined && selectedDistrict && (
-                <MapComponent
-                    district={selectedDistrict}
-                    index={selectedIndex}
-                />
+                <>
+                    <h3 className={"py-2 d-flex justify-content-between"}>Karte <FormCheck type={"switch"} checked={showMap} onChange={handleCheckedChange}/></h3>
+                    {showMap && <MapComponent
+                        district={selectedDistrict}
+                        index={selectedIndex}
+                    />}
+                </>
             )}
         </div>
     );
