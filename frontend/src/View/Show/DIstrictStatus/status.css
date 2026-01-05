@@ -3,6 +3,7 @@
     max-width: 90dvw;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     align-self: center;
+    margin-top: 3em;
 }
 
 .status-title {
