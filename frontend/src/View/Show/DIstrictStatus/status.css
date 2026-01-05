@@ -6,12 +6,12 @@
     column-gap: 2em;
     row-gap: 0.5em;
     align-self: center;
-    margin-top: 3em;
+    font-size: 1.3em;
 }
 
 .status-title {
     margin-top: 40px;
-    font-size: 6em;
+    font-size: 7em;
     margin-bottom: 30px;
     text-align: center;
 }
