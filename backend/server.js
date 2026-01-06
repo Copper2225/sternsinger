@@ -1,14 +1,21 @@
 import { config } from "dotenv";
 import express from "express";
 import cors from "cors";
+import crypto from "crypto";
+import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
 
 import { WebSocketServer } from "ws";
 
 config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+}));
 app.use(express.json());
+app.use(cookieParser(process.env.SECRET));
 
 let districtValues = [];
 const log = [];
@@ -22,6 +29,16 @@ const BACKEND_SERVER_URL =
 const server = app.listen(PORT, () => {
   console.log(`API server running at ${BACKEND_SERVER_URL}`);
 });
+
+let tries = 0;
+
+const timer = setInterval(() => {
+  if (tries > 0) {
+    tries--;
+  } else {
+    clearInterval(timer); // Stops the timer when it reaches zero
+  }
+}, 60000);
 
 const wss = new WebSocketServer({ server });
 
@@ -90,20 +107,52 @@ app.post("/district", (req, res) => {
 app.post("/districts", (req, res) => {
   const { value } = req.body;
 
-  // Update or add the value for the specified district
   districtValues = value;
 
-  // Log the action
   const timestamp = new Date().toISOString();
   log.push({ timestamp, action: `Districts updated`, value });
 
-  // Broadcast the updated district values
   broadcast({ type: "districtUpdate", districtValues });
 
   res.json({ success: true, districtValues });
 });
 
-// Endpoint to get the log
 app.get("/log", (req, res) => {
   res.json(log);
+});
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: "Zu viele Login-Versuche, versuche es in 15 Minuten erneut."
+});
+
+app.post("/pass", loginLimiter, (req, res) => {
+  const { password } = req.body;
+  if (!password) return res.status(400).json({ success: false });
+
+  const inputHash = crypto.createHash('sha256').update(password).digest();
+  const storedHash = Buffer.from(process.env.ADMIN_PASSWORD, 'hex');
+
+  if (crypto.timingSafeEqual(inputHash, storedHash)) {
+    res.cookie('admin_session', 'authorized', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      signed: true,
+      maxAge: 60 * 60 * 1000 * 12,
+    });
+
+    return res.json({ success: true });
+  } else {
+    return res.status(401).json({ success: false });
+  }
+});
+
+app.get("/check-auth", (req, res) => {
+  if (req.signedCookies.admin_session === 'authorized') {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(401);
+  }
 });

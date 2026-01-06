@@ -62,7 +62,11 @@ Backend reads environment variables from `.env` if present. Typical values:
 ```
 PORT=3000
 ORIGIN=http://localhost:5173
+ADMIN_PASSWORD=XXX
+SECRET=XXX
 ```
+
+For the ADMIN_PASSWORD use: echo -n "XXX" | sha256sum
 
 ### Development tips
 
