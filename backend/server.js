@@ -30,16 +30,6 @@ const server = app.listen(PORT, () => {
   console.log(`API server running at ${BACKEND_SERVER_URL}`);
 });
 
-let tries = 0;
-
-const timer = setInterval(() => {
-  if (tries > 0) {
-    tries--;
-  } else {
-    clearInterval(timer); // Stops the timer when it reaches zero
-  }
-}, 60000);
-
 const wss = new WebSocketServer({ server });
 
 const broadcast = (message) => {
