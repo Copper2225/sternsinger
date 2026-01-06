@@ -6,13 +6,12 @@
     column-gap: 2em;
     row-gap: 0.5em;
     align-self: center;
-    font-size: 1.3em;
 }
 
 .status-title {
-    margin-top: 40px;
+    margin-top: 10px;
     font-size: 7em;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
     text-align: center;
 }
 
@@ -108,6 +107,10 @@
 @media screen and (orientation: landscape) and (min-width: 2500px) {
     .status-wrapper {
         font-size: 17px;
+    }
+
+    .status-grid {
+        font-size: 1.2em;
     }
 
     .status-title {
