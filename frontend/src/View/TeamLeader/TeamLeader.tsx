@@ -165,6 +165,13 @@ const TeamLeader = () => {
         [],
     );
 
+    const handleReset = useCallback(() => {
+        setLockDistrict(false);
+        if (!lockDistrict && selectedIndex !== undefined) {
+            checkDistrictAuth(selectedIndex);
+        }
+    }, [checkDistrictAuth, lockDistrict, selectedIndex]);
+
     return (
         <div className={"h-100 d-flex flex-column p-2"}>
             <DistrictLoginModal
@@ -224,7 +231,7 @@ const TeamLeader = () => {
                 </FormSelect>
                 <Button
                     className={"ratio-1x1"}
-                    onClick={() => setLockDistrict(false)}
+                    onClick={handleReset}
                 >
                     <FontAwesomeIcon icon={faRotateRight} />
                 </Button>

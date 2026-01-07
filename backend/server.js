@@ -208,6 +208,7 @@ app.post("/dist-check-auth", (req, res) => {
   const { index } = req.body;
 
   if (districtIndex !== index && !forceAllow) {
+    res.clearCookie("district_session");
     return res.sendStatus(403);
   } else  {
     res.sendStatus(200);
