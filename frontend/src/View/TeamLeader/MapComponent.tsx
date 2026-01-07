@@ -121,6 +121,7 @@ const MapComponent = ({ index, district }: Props) => {
                         markers: serializable,
                     },
                 }),
+                credentials: "include"
             })
                 .then((response) => response.json())
                 .catch((error) =>
