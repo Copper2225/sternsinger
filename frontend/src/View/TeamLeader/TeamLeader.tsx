@@ -142,6 +142,7 @@ const TeamLeader = () => {
                     index: selectedIndex,
                     value: { ...selectedDistrict, contact: teamContact },
                 }),
+                credentials: "include",
             })
                 .then((response) => response.json())
                 .then((data) =>

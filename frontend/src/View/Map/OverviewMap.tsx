@@ -153,6 +153,7 @@ const OverviewMap = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ value: updatedDistricts }),
+            credentials: "include"
         })
             .then((response) => response.json())
             .catch((error) =>
