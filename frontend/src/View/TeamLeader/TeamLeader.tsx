@@ -90,7 +90,6 @@ const TeamLeader = () => {
         const res = await fetch(`${backendURL}/district-auth`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            credentials: "include",
             body: JSON.stringify({
                 index: selectedIndex,
                 passcode: districtPasscode,
