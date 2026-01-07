@@ -41,6 +41,7 @@ const AdminGate = ({ children }: { children: JSX.Element }) => {
         const response = await fetch(`${backendURL}/pass`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({ password }),
         });
 
