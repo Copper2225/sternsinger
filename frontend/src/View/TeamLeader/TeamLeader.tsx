@@ -38,7 +38,7 @@ const TeamLeader = () => {
     const loadDistricts = useLoadDistricts();
     const [districts, setDistricts] = useRecoilState(districtsState);
     const [selectedDistrict, setSelectedDistrict] = useState<District>();
-    const [selectedIndex, setSelectedIndex] = useState<number>();
+    const [selectedIndex, setSelectedIndex] = useState<number>(-1);
     const [lockDistrict, setLockDistrict] = useState<boolean>(false);
     const [nextModal, setNextModal] = useState(false);
     const [statusModal, setStatusModal] = useState(false);
@@ -47,28 +47,6 @@ const TeamLeader = () => {
     const [districtPasscode, setDistrictPasscode] = useState("");
     const backendURL = import.meta.env.VITE_BACKEND_URL;
     const [showMap, setShowMap] = useState<boolean>(false);
-
-    useEffect(() => {
-        fetch(`${backendURL}/districts`)
-            .then((response) => response.json())
-            .then((data) => {
-                const index = Number(Cookies.get("district"));
-                if (!isNaN(index)) {
-                    setSelectedIndex(index);
-                    setSelectedDistrict({
-                        ...data[index],
-                        status:
-                            data[index].status ?? DistrictStatusText.notPlanned,
-                    });
-                    setLockDistrict(true);
-                }
-                setDistricts(data);
-            })
-            .catch((error) =>
-                console.error("Error fetching districts:", error),
-            );
-        setShowMap(Cookies.get("showMap") === "true");
-    }, [backendURL, loadDistricts, setDistricts]);
 
     const checkDistrictAuth = useCallback(
         async (index: number) => {
@@ -85,6 +63,31 @@ const TeamLeader = () => {
         },
         [backendURL],
     );
+
+    useEffect(() => {
+        fetch(`${backendURL}/districts`)
+            .then((response) => response.json())
+            .then((data) => {
+                const index = Number(Cookies.get("district"));
+                if (!isNaN(index)) {
+                    setSelectedIndex(index);
+                    setSelectedDistrict({
+                        ...data[index],
+                        status:
+                            data[index].status ?? DistrictStatusText.notPlanned,
+                    });
+                    setLockDistrict(true);
+                    checkDistrictAuth(index);
+                }
+                setDistricts(data);
+            })
+            .catch((error) =>
+                console.error("Error fetching districts:", error),
+            );
+        setShowMap(Cookies.get("showMap") === "true");
+    }, [backendURL, checkDistrictAuth, loadDistricts, setDistricts]);
+
+
 
     const handleDistrictLogin = async () => {
         const res = await fetch(`${backendURL}/district-auth`, {
@@ -167,7 +170,7 @@ const TeamLeader = () => {
 
     const handleReset = useCallback(() => {
         setLockDistrict(false);
-        if (!lockDistrict && selectedIndex !== undefined) {
+        if (!lockDistrict && selectedIndex !== -1) {
             checkDistrictAuth(selectedIndex);
         }
     }, [checkDistrictAuth, lockDistrict, selectedIndex]);
@@ -181,7 +184,7 @@ const TeamLeader = () => {
                 onSubmit={handleDistrictLogin}
                 onCancel={() => {
                     setNeedsDistrictAuth(false);
-                    setSelectedIndex(undefined);
+                    setSelectedIndex(-1);
                     setSelectedDistrict(undefined);
                     setLockDistrict(false);
                 }}
@@ -252,7 +255,7 @@ const TeamLeader = () => {
                     </Button>
                 </div>
             </Form>
-            {selectedIndex !== undefined && selectedDistrict && (
+            {selectedIndex !== undefined && selectedDistrict && !needsDistrictAuth && (
                 <>
                     <h3 className={"py-2 d-flex justify-content-between"}>
                         Karte{" "}
