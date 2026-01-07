@@ -7,9 +7,10 @@ import { District, DistrictMarker } from "src/requests/adminStore";
 interface Props {
     index: number;
     district: District;
+    fullscreen?: boolean;
 }
 
-const MapComponent = ({ index, district }: Props) => {
+const MapComponent = ({ index, district, fullscreen = false }: Props) => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const backendURL = import.meta.env.VITE_BACKEND_URL;
@@ -121,7 +122,7 @@ const MapComponent = ({ index, district }: Props) => {
                         markers: serializable,
                     },
                 }),
-                credentials: "include"
+                credentials: "include",
             })
                 .then((response) => response.json())
                 .catch((error) =>
@@ -340,7 +341,6 @@ const MapComponent = ({ index, district }: Props) => {
         });
         map.addControl(geolocate, "top-left");
 
-        // Style toggle control (streets <-> satellite)
         {
             let container: HTMLDivElement | null = null;
             let currentStyle: "streets" | "satellite" = "streets";
@@ -520,6 +520,15 @@ const MapComponent = ({ index, district }: Props) => {
         showAddConfirmPopup,
         district,
     ]);
+
+    useEffect(() => {
+        if (mapRef.current) {
+            requestAnimationFrame(() => {
+                mapRef.current?.resize();
+            });
+        }
+    }, [fullscreen]);
+
 
     return (
         <div className={"map-wrapper mb-3 h-100"}>

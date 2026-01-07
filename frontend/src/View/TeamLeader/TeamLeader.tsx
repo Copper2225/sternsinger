@@ -24,7 +24,10 @@ import "./teamLeader.css";
 import Cookies from "js-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+    faExpand,
     faFilm,
+    faMaximize,
+    faMinimize,
     faPaperPlane,
     faRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
@@ -41,6 +44,7 @@ const TeamLeader = () => {
     const [selectedIndex, setSelectedIndex] = useState<number>(-1);
     const [lockDistrict, setLockDistrict] = useState<boolean>(false);
     const [nextModal, setNextModal] = useState(false);
+    const [mapFullscreen, setMapFullscreen] = useState(false);
     const [statusModal, setStatusModal] = useState(false);
     const [buttonTimeout, setButtonTimeout] = useState<boolean>();
     const [needsDistrictAuth, setNeedsDistrictAuth] = useState(false);
@@ -86,8 +90,6 @@ const TeamLeader = () => {
             );
         setShowMap(Cookies.get("showMap") === "true");
     }, [backendURL, checkDistrictAuth, loadDistricts, setDistricts]);
-
-
 
     const handleDistrictLogin = async () => {
         const res = await fetch(`${backendURL}/district-auth`, {
@@ -190,89 +192,108 @@ const TeamLeader = () => {
                 }}
             />
 
-            <div className={"d-flex gap-3"}>
-                <Button
-                    className={"flex-grow-1 my-2"}
-                    onClick={() => setNextModal(true)}
-                >
-                    <FontAwesomeIcon icon={faFilm} size={"3x"} />
-                </Button>
-                <NextModal show={nextModal} setShow={setNextModal} />
-                <Button
-                    className={"flex-grow-1 my-2"}
-                    onClick={() => setStatusModal(true)}
-                >
-                    <StatusIcon
-                        colored={false}
-                        status={selectedDistrict?.status}
-                        size={"3x"}
-                    />
-                </Button>
-                <StatusModal
-                    show={statusModal}
-                    setShow={setStatusModal}
-                    index={selectedIndex}
-                    district={selectedDistrict}
-                    setDistricts={setDistricts}
-                    setSelectedDistrict={setSelectedDistrict}
-                />
-            </div>
-            <div className={"d-flex gap-3 mb-3"}>
-                <FormSelect
-                    value={selectedIndex}
-                    className={"fs-2"}
-                    name={"districtIndex"}
-                    onChange={handleChangeDistrict}
-                    disabled={lockDistrict}
-                >
-                    <option value={-1}></option>
-                    {districts.map((district, index) => (
-                        <option value={index} key={district.name}>
-                            {district.name}
-                        </option>
-                    ))}
-                </FormSelect>
-                <Button
-                    className={"ratio-1x1"}
-                    onClick={handleReset}
-                >
-                    <FontAwesomeIcon icon={faRotateRight} />
-                </Button>
-            </div>
-            <Form onSubmit={handleContactSubmit}>
-                <FormLabel htmlFor={"teamContact"}>Teamleiter</FormLabel>
-                <div className={"d-flex gap-3"}>
-                    <FormControl
-                        defaultValue={selectedDistrict?.contact}
-                        name={"teamContact"}
-                    />
-                    <Button
-                        name={"contact"}
-                        type="submit"
-                        disabled={buttonTimeout}
-                    >
-                        <FontAwesomeIcon icon={faPaperPlane} />
-                    </Button>
-                </div>
-            </Form>
-            {selectedIndex !== undefined && selectedDistrict && !needsDistrictAuth && (
+            {!mapFullscreen && (
                 <>
-                    <h3 className={"py-2 d-flex justify-content-between"}>
-                        Karte{" "}
-                        <FormCheck
-                            type={"switch"}
-                            checked={showMap}
-                            onChange={handleCheckedChange}
-                        />
-                    </h3>
-                    {showMap && (
-                        <MapComponent
-                            district={selectedDistrict}
+                    <div className={"d-flex gap-3"}>
+                        <Button
+                            className={"flex-grow-1 my-2"}
+                            onClick={() => setNextModal(true)}
+                        >
+                            <FontAwesomeIcon icon={faFilm} size={"3x"} />
+                        </Button>
+                        <NextModal show={nextModal} setShow={setNextModal} />
+                        <Button
+                            className={"flex-grow-1 my-2"}
+                            onClick={() => setStatusModal(true)}
+                        >
+                            <StatusIcon
+                                colored={false}
+                                status={selectedDistrict?.status}
+                                size={"3x"}
+                            />
+                        </Button>
+                        <StatusModal
+                            show={statusModal}
+                            setShow={setStatusModal}
                             index={selectedIndex}
+                            district={selectedDistrict}
+                            setDistricts={setDistricts}
+                            setSelectedDistrict={setSelectedDistrict}
                         />
-                    )}
+                    </div>
+                    <div className={"d-flex gap-3 mb-3"}>
+                        <FormSelect
+                            value={selectedIndex}
+                            className={"fs-2"}
+                            name={"districtIndex"}
+                            onChange={handleChangeDistrict}
+                            disabled={lockDistrict}
+                        >
+                            <option value={-1}></option>
+                            {districts.map((district, index) => (
+                                <option value={index} key={district.name}>
+                                    {district.name}
+                                </option>
+                            ))}
+                        </FormSelect>
+                        <Button className={"ratio-1x1"} onClick={handleReset}>
+                            <FontAwesomeIcon icon={faRotateRight} />
+                        </Button>
+                    </div>
+                    <Form onSubmit={handleContactSubmit}>
+                        <FormLabel htmlFor={"teamContact"}>
+                            Teamleiter
+                        </FormLabel>
+                        <div className={"d-flex gap-3"}>
+                            <FormControl
+                                defaultValue={selectedDistrict?.contact}
+                                name={"teamContact"}
+                            />
+                            <Button
+                                name={"contact"}
+                                type="submit"
+                                disabled={buttonTimeout}
+                            >
+                                <FontAwesomeIcon icon={faPaperPlane} />
+                            </Button>
+                        </div>
+                    </Form>
                 </>
             )}
+            {selectedIndex !== undefined &&
+                selectedDistrict &&
+                !needsDistrictAuth && (
+                    <>
+                        <h3 className={"py-2 d-flex justify-content-between"}>
+                            <div className={"d-flex gap-3"}>
+                                <span>Karte</span>
+                                <FormCheck
+                                    type={"switch"}
+                                    checked={showMap}
+                                    onChange={handleCheckedChange}
+                                />
+                            </div>
+                            {showMap && (
+                                <Button onClick={() => setMapFullscreen(!mapFullscreen)}>
+                                    <FontAwesomeIcon
+                                        icon={
+                                            mapFullscreen
+                                                ? faMinimize
+                                                : faMaximize
+                                        }
+                                    />
+                                </Button>
+                            )}
+                        </h3>
+                        {showMap && (
+                            <MapComponent
+                                district={selectedDistrict}
+                                index={selectedIndex}
+                                fullscreen={mapFullscreen}
+                            />
+                        )}
+                    </>
+                )}
         </div>
     );
 };

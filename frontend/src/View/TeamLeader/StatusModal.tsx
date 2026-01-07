@@ -38,7 +38,7 @@ const StatusModal = ({
                         index: index,
                         value: { ...district, status: value },
                     }),
-                    credentials: "include"
+                    credentials: "include",
                 })
                     .then((response) => response.json())
                     .then((data) =>
