@@ -58,7 +58,7 @@ const TeamLeader = () => {
             });
 
             if (!res.ok) {
-                setNeedsDistrictAuth(true);
+                setNeedsDistrictAuth(false);
             }
         },
         [backendURL],
