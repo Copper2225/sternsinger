@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { authState } from "src/requests/adminStore";
-import { Card, Button, Form, InputGroup, Container, Spinner } from "react-bootstrap";
+import {
+    Card,
+    Button,
+    Form,
+    InputGroup,
+    Container,
+    Spinner,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash, faLock } from "@fortawesome/free-solid-svg-icons";
 
@@ -65,10 +72,17 @@ const AdminGate = ({ children }: { children: JSX.Element }) => {
             className="d-flex align-items-center justify-content-center"
             style={{ minHeight: "100vh" }}
         >
-            <Card style={{ width: "100%", maxWidth: 420 }} className="shadow-sm">
+            <Card
+                style={{ width: "100%", maxWidth: 420 }}
+                className="shadow-sm"
+            >
                 <Card.Body>
                     <div className="text-center mb-4">
-                        <FontAwesomeIcon icon={faLock} size="2x" className="mb-2" />
+                        <FontAwesomeIcon
+                            icon={faLock}
+                            size="2x"
+                            className="mb-2"
+                        />
                         <h4 className="mb-0">Admin Bereich</h4>
                     </div>
 
@@ -84,7 +98,9 @@ const AdminGate = ({ children }: { children: JSX.Element }) => {
                                 <Form.Control
                                     type={showPassword ? "text" : "password"}
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
                                     placeholder="Passwort eingeben"
                                 />
                                 <Button

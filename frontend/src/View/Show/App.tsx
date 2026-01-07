@@ -31,7 +31,7 @@ const App: React.FC = () => {
 
     const hideLogo = useMemo(() => {
         const searchParams = new URLSearchParams(window.location.search);
-        return (searchParams.has("logo"));
+        return searchParams.has("logo");
     }, []);
 
     useEffect(() => {
@@ -40,7 +40,8 @@ const App: React.FC = () => {
                 setLeavingIndex(viewIndex);
                 setTimeout(() => {
                     setViewIndex(
-                        (prevState) => (prevState + 1) % (3 - deactivates.length),
+                        (prevState) =>
+                            (prevState + 1) % (3 - deactivates.length),
                     );
                     setLeavingIndex(-1);
                 }, 1000);

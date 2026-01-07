@@ -43,7 +43,6 @@
         font-size: 30px;
         padding-top: 10vh;
     }
-
 }
 
 @media screen and (orientation: landscape) and (max-height: 450px) {
@@ -51,7 +50,6 @@
         font-size: 20px;
         padding-top: 10vh;
     }
-
 }
 
 /* Landscape mobile styles */

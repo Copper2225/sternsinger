@@ -14,7 +14,8 @@ import {
 import { useLoadDistricts } from "src/requests/useLoadDistricts";
 import {
     Button,
-    Form, FormCheck,
+    Form,
+    FormCheck,
     FormControl,
     FormLabel,
     FormSelect,
@@ -31,6 +32,7 @@ import NextModal from "src/View/TeamLeader/NextModal";
 import MapComponent from "src/View/TeamLeader/MapComponent";
 import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
 import StatusModal from "src/View/TeamLeader/StatusModal";
+import DistrictLoginModal from "src/View/TeamLeader/DistrictLoginModal";
 
 const TeamLeader = () => {
     const loadDistricts = useLoadDistricts();
@@ -41,6 +43,8 @@ const TeamLeader = () => {
     const [nextModal, setNextModal] = useState(false);
     const [statusModal, setStatusModal] = useState(false);
     const [buttonTimeout, setButtonTimeout] = useState<boolean>();
+    const [needsDistrictAuth, setNeedsDistrictAuth] = useState(false);
+    const [districtPasscode, setDistrictPasscode] = useState("");
     const backendURL = import.meta.env.VITE_BACKEND_URL;
     const [showMap, setShowMap] = useState<boolean>(false);
 
@@ -66,6 +70,41 @@ const TeamLeader = () => {
         setShowMap(Cookies.get("showMap") === "true");
     }, [backendURL, loadDistricts, setDistricts]);
 
+    const checkDistrictAuth = useCallback(
+        async (index: number) => {
+            const res = await fetch(`${backendURL}/dist-check-auth`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ index }),
+            });
+
+            if (!res.ok) {
+                setNeedsDistrictAuth(true);
+            }
+        },
+        [backendURL],
+    );
+
+    const handleDistrictLogin = async () => {
+        const res = await fetch(`${backendURL}/district-auth`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                index: selectedIndex,
+                passcode: districtPasscode,
+            }),
+        });
+
+        if (res.ok) {
+            setNeedsDistrictAuth(false);
+            setLockDistrict(true);
+        } else {
+            alert("Falscher Passcode");
+        }
+    };
+
     const handleChangeDistrict = useCallback(
         (event: ChangeEvent<HTMLSelectElement>) => {
             const index = Number(event.currentTarget.value);
@@ -80,11 +119,12 @@ const TeamLeader = () => {
                     setSelectedDistrict(dist);
                 }
                 setSelectedIndex(index);
+                checkDistrictAuth(index);
                 Cookies.set("district", index.toString());
                 setLockDistrict(true);
             }
         },
-        [districts],
+        [checkDistrictAuth, districts],
     );
 
     const handleContactSubmit = useCallback(
@@ -116,13 +156,29 @@ const TeamLeader = () => {
         [backendURL, selectedDistrict, selectedIndex],
     );
 
-    const handleCheckedChange= useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        setShowMap(event.target.checked);
-        Cookies.set("showMap", event.target.checked.toString());
-    }, [])
+    const handleCheckedChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            setShowMap(event.target.checked);
+            Cookies.set("showMap", event.target.checked.toString());
+        },
+        [],
+    );
 
     return (
         <div className={"h-100 d-flex flex-column p-2"}>
+            <DistrictLoginModal
+                show={needsDistrictAuth}
+                passcode={districtPasscode}
+                setPasscode={setDistrictPasscode}
+                onSubmit={handleDistrictLogin}
+                onCancel={() => {
+                    setNeedsDistrictAuth(false);
+                    setSelectedIndex(undefined);
+                    setSelectedDistrict(undefined);
+                    setLockDistrict(false);
+                }}
+            />
+
             <div className={"d-flex gap-3"}>
                 <Button
                     className={"flex-grow-1 my-2"}
@@ -179,18 +235,31 @@ const TeamLeader = () => {
                         defaultValue={selectedDistrict?.contact}
                         name={"teamContact"}
                     />
-                    <Button name={"contact"} type="submit" disabled={buttonTimeout}>
+                    <Button
+                        name={"contact"}
+                        type="submit"
+                        disabled={buttonTimeout}
+                    >
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </Button>
                 </div>
             </Form>
             {selectedIndex !== undefined && selectedDistrict && (
                 <>
-                    <h3 className={"py-2 d-flex justify-content-between"}>Karte <FormCheck type={"switch"} checked={showMap} onChange={handleCheckedChange}/></h3>
-                    {showMap && <MapComponent
-                        district={selectedDistrict}
-                        index={selectedIndex}
-                    />}
+                    <h3 className={"py-2 d-flex justify-content-between"}>
+                        Karte{" "}
+                        <FormCheck
+                            type={"switch"}
+                            checked={showMap}
+                            onChange={handleCheckedChange}
+                        />
+                    </h3>
+                    {showMap && (
+                        <MapComponent
+                            district={selectedDistrict}
+                            index={selectedIndex}
+                        />
+                    )}
                 </>
             )}
         </div>

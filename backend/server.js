@@ -18,6 +18,10 @@ app.use(express.json());
 app.use(cookieParser(process.env.SECRET));
 
 let districtValues = [];
+let districtSecrets = [];
+
+const forceAllow = true;
+
 const log = [];
 
 // Use the environment variable or default to 3000 if not set
@@ -29,6 +33,12 @@ const BACKEND_SERVER_URL =
 const server = app.listen(PORT, () => {
   console.log(`API server running at ${BACKEND_SERVER_URL}`);
 });
+
+const generateDistrictPasscode = () =>
+    crypto.randomBytes(3).toString("hex").slice(0, 6);
+
+const hashPasscode = (passcode) =>
+    crypto.createHash("sha256").update(passcode).digest();
 
 const wss = new WebSocketServer({ server });
 
@@ -73,43 +83,61 @@ app.get("/districts", (req, res) => {
   }
 });
 
-// Endpoint to update a specific district's value
+
 app.post("/district", (req, res) => {
+  const districtIndex = Number(req.signedCookies.district_session);
   const { index, value } = req.body;
 
-  if (typeof index !== "number") {
-    return res.status(400).json({ error: "Invalid index or value" });
+  if (districtIndex !== index && req.signedCookies.admin_session !== 'authorized' && !forceAllow) {
+    return res.sendStatus(403);
   }
 
-  // Update or add the value for the specified district
+  if (typeof index !== "number") {
+    return res.status(400).json({ error: "Invalid index" });
+  }
+
   districtValues[index] = value;
 
-  // Log the action
   const timestamp = new Date().toISOString();
-  log.push({ timestamp, action: `District ${value.name} updated`, value });
+  log.push({
+    timestamp,
+    action: `District ${value.name} updated`,
+  });
 
-  // Broadcast the updated district values
   broadcast({ type: "districtUpdate", districtValues });
 
-  res.json({ success: true, districtValues });
+  res.json({ success: true });
 });
 
+
 app.post("/districts", (req, res) => {
+  if (req.signedCookies.admin_session !== 'authorized') {
+    return res.sendStatus(401);
+  }
+
   const { value } = req.body;
+  if (!Array.isArray(value)) {
+    return res.status(400).json({ error: "Invalid districts value" });
+  }
+
+  if (value.length !== districtValues.length) {
+    districtSecrets = value.map(() => {
+      const pass = generateDistrictPasscode();
+      return { plain: pass, hash: hashPasscode(pass) };
+    });
+  }
 
   districtValues = value;
 
   const timestamp = new Date().toISOString();
-  log.push({ timestamp, action: `Districts updated`, value });
+  log.push({ timestamp, action: "Districts updated" });
 
   broadcast({ type: "districtUpdate", districtValues });
 
   res.json({ success: true, districtValues });
 });
 
-app.get("/log", (req, res) => {
-  res.json(log);
-});
+
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -146,3 +174,53 @@ app.get("/check-auth", (req, res) => {
     res.sendStatus(401);
   }
 });
+
+app.post("/district-auth", (req, res) => {
+  const { index, passcode } = req.body;
+
+  if (typeof index !== "number" || !passcode) {
+    return res.sendStatus(400);
+  }
+
+  const secret = districtSecrets[index];
+  if (!secret) {
+    return res.sendStatus(401);
+  }
+
+  if (passcode === secret.plain) {
+    res.cookie("district_session", String(index), {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      signed: true,
+      maxAge: 12 * 60 * 60 * 1000,
+    });
+
+    return res.json({ success: true });
+  }
+
+  res.sendStatus(401);
+});
+
+
+app.post("/dist-check-auth", (req, res) => {
+  const districtIndex = Number(req.signedCookies.district_session);
+  const { index } = req.body;
+
+  if (districtIndex !== index && !forceAllow) {
+    return res.sendStatus(403);
+  } else  {
+    res.sendStatus(200);
+  }
+});
+
+app.get("/district-passcodes", (req, res) => {
+  if (req.signedCookies.admin_session !== 'authorized') {
+    return res.sendStatus(401);
+  }
+
+  const passcodes = districtSecrets.map((s) => s.plain);
+
+  res.json({ success: true, passcodes });
+});
+

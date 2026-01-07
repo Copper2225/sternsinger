@@ -35,8 +35,6 @@
     flex-direction: column;
 }
 
-
-
 /* Landscape mobile styles */
 @media screen and (orientation: landscape) and (max-height: 950px) {
     .status-wrapper {

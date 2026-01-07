@@ -14,15 +14,16 @@ const DistrictStatus = ({ districts }: Props): ReactElement => {
     });
 
     React.useEffect(() => {
-        const handleResize = () => setWindowSize({
-            width: window.innerWidth,
-            height: window.innerHeight,
-        });
+        const handleResize = () =>
+            setWindowSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const activeDistricts = districts.filter(dist => dist.counting);
+    const activeDistricts = districts.filter((dist) => dist.counting);
 
     const getBaseRows = (width: number, height: number) => {
         if (height < 500) return 3;
@@ -35,7 +36,10 @@ const DistrictStatus = ({ districts }: Props): ReactElement => {
     };
 
     const maxRows = getBaseRows(windowSize.width, windowSize.height);
-    const calculatedRows = activeDistricts.length > 0 ? Math.min(activeDistricts.length, maxRows) : 1;
+    const calculatedRows =
+        activeDistricts.length > 0
+            ? Math.min(activeDistricts.length, maxRows)
+            : 1;
 
     return (
         <>
@@ -43,10 +47,17 @@ const DistrictStatus = ({ districts }: Props): ReactElement => {
                 <span className={"status-title"}>Bezirke Status:</span>
                 <div
                     className={"status-grid w-100"}
-                    style={{ gridTemplateRows: `repeat(${calculatedRows}, auto)` }}
+                    style={{
+                        gridTemplateRows: `repeat(${calculatedRows}, auto)`,
+                    }}
                 >
                     {activeDistricts.map((district) => (
-                        <div key={district.name} className={"d-flex flex-row align-items-center status-item"}>
+                        <div
+                            key={district.name}
+                            className={
+                                "d-flex flex-row align-items-center status-item"
+                            }
+                        >
                             <StatusIcon status={district.status} />
                             <div className={""}>{district.name}</div>
                         </div>

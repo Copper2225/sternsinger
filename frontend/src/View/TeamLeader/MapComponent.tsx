@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { v4 as uuidv4 } from "uuid";
-import {District, DistrictMarker} from "src/requests/adminStore";
+import { District, DistrictMarker } from "src/requests/adminStore";
 
 interface Props {
     index: number;
     district: District;
 }
 
-const MapComponent = ({index, district}: Props) => {
+const MapComponent = ({ index, district }: Props) => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const backendURL = import.meta.env.VITE_BACKEND_URL;
@@ -18,21 +18,32 @@ const MapComponent = ({index, district}: Props) => {
         const src = district.markers as unknown;
         if (src instanceof Map) return new Map<string, DistrictMarker>(src);
         if (src && typeof src === "object") {
-            const entries = Object.entries(src as Record<string, unknown>) as [string, DistrictMarker][];
+            const entries = Object.entries(src as Record<string, unknown>) as [
+                string,
+                DistrictMarker,
+            ][];
             return new Map<string, DistrictMarker>(entries);
         }
         return new Map<string, DistrictMarker>();
     }, [district.markers]);
 
-    type RenderedMarker = DistrictMarker & { mapMarker: mapboxgl.Marker; originalHTML: string };
+    type RenderedMarker = DistrictMarker & {
+        mapMarker: mapboxgl.Marker;
+        originalHTML: string;
+    };
     const markersRef = useRef<Map<string, RenderedMarker>>(new Map());
 
     const defaultMarkerColor = "#3FB1CE";
     const notesColor = "#DDAA33";
 
-    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_KEY as string | undefined;
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_KEY as
+        | string
+        | undefined;
 
-    const centerLngLat = useMemo<[number, number]>(() => [7.841325, 52.040678], []);
+    const centerLngLat = useMemo<[number, number]>(
+        () => [7.841325, 52.040678],
+        [],
+    );
     const mapZoom = 14.6;
 
     const createDoneMarkerElement = useCallback(() => {
@@ -52,29 +63,37 @@ const MapComponent = ({index, district}: Props) => {
         return el;
     }, []);
 
-    const updateMarkerColor = useCallback((key: string) => {
-        const current = markersRef.current.get(key);
-        if (current) {
-            const el = current.mapMarker.getElement();
+    const updateMarkerColor = useCallback(
+        (key: string) => {
+            const current = markersRef.current.get(key);
+            if (current) {
+                const el = current.mapMarker.getElement();
 
-            if (current.done) {
-                const doneMarkerElement = createDoneMarkerElement();
-                // Replace inner content with the "done" badge while keeping the outer marker element and listeners
-                el.innerHTML = "";
-                el.appendChild(doneMarkerElement);
-            } else {
-                // Restore original default marker HTML and then recolor based on notes
-                if (current.originalHTML) {
-                    el.innerHTML = current.originalHTML;
-                }
-                const path = el?.querySelector?.("path") as SVGPathElement | null;
-                if (path) {
-                    const newFill = current.notes.trim().length > 0 ? notesColor : defaultMarkerColor;
-                    path.setAttribute("fill", newFill);
+                if (current.done) {
+                    const doneMarkerElement = createDoneMarkerElement();
+                    // Replace inner content with the "done" badge while keeping the outer marker element and listeners
+                    el.innerHTML = "";
+                    el.appendChild(doneMarkerElement);
+                } else {
+                    // Restore original default marker HTML and then recolor based on notes
+                    if (current.originalHTML) {
+                        el.innerHTML = current.originalHTML;
+                    }
+                    const path = el?.querySelector?.(
+                        "path",
+                    ) as SVGPathElement | null;
+                    if (path) {
+                        const newFill =
+                            current.notes.trim().length > 0
+                                ? notesColor
+                                : defaultMarkerColor;
+                        path.setAttribute("fill", newFill);
+                    }
                 }
             }
-        }
-    }, [createDoneMarkerElement]);
+        },
+        [createDoneMarkerElement],
+    );
 
     const removeMarker = useCallback((key: string) => {
         const instance = markersRef.current.get(key);
@@ -94,7 +113,7 @@ const MapComponent = ({index, district}: Props) => {
             );
             fetch(`${backendURL}/district`, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     index: index,
                     value: {
@@ -110,158 +129,194 @@ const MapComponent = ({index, district}: Props) => {
         }
     }, [backendURL, district, index]);
 
-    const renderMarkerPopupContent = useCallback((key: string) => {
-        const container = document.createElement("div");
-        container.className = "d-flex flex-column";
+    const renderMarkerPopupContent = useCallback(
+        (key: string) => {
+            const container = document.createElement("div");
+            container.className = "d-flex flex-column";
 
-        const label = document.createElement("div");
-        label.textContent = "Marker";
-        container.appendChild(label);
+            const label = document.createElement("div");
+            label.textContent = "Marker";
+            container.appendChild(label);
 
-        const current = markersRef.current.get(key);
+            const current = markersRef.current.get(key);
 
-        const notesLabel = document.createElement("label");
-        notesLabel.textContent = "Notizen";
-        notesLabel.className = "mt-2";
-        container.appendChild(notesLabel);
+            const notesLabel = document.createElement("label");
+            notesLabel.textContent = "Notizen";
+            notesLabel.className = "mt-2";
+            container.appendChild(notesLabel);
 
-        const textarea = document.createElement("textarea");
-        textarea.className = "form-control";
-        textarea.rows = 3;
-        textarea.value = current?.notes ?? "";
-        textarea.addEventListener("input", (e) => {
-            const instance = markersRef.current.get(key);
-            if (instance) {
-                instance.notes = (e.target as HTMLTextAreaElement).value;
-            }
-        });
-        // prevent map interactions while typing
-        ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
-            textarea.addEventListener(evt, (ev) => ev.stopPropagation());
-        });
-        container.appendChild(textarea);
-
-        const checkboxWrapper = document.createElement("div");
-        checkboxWrapper.className = "form-check mt-2";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.className = "form-check-input";
-        checkbox.id = `done-${key}`;
-        checkbox.checked = Boolean(current?.done);
-        checkbox.addEventListener("change", () => {
-            const instance = markersRef.current.get(key);
-            if (instance) {
-                instance.done = checkbox.checked;
-            }
-        });
-        ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
-            checkbox.addEventListener(evt, (ev) => ev.stopPropagation());
-        });
-
-        const checkboxLabel = document.createElement("label");
-        checkboxLabel.className = "form-check-label";
-        checkboxLabel.htmlFor = `done-${key}`;
-        checkboxLabel.textContent = "Erledigt";
-
-        checkboxWrapper.appendChild(checkbox);
-        checkboxWrapper.appendChild(checkboxLabel);
-        container.appendChild(checkboxWrapper);
-
-        const button = document.createElement("button");
-        button.className = "btn btn-danger mt-2";
-        button.textContent = "Löschen";
-        button.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            removeMarker(key);
-            handleSave();
-        });
-        container.appendChild(button);
-
-        return container;
-    }, [removeMarker, handleSave]);
-
-    const addMarker = useCallback((lat: number, lng: number) => {
-        const key = uuidv4();
-        if (!mapRef.current) return;
-        const popup = new mapboxgl.Popup({ offset: 16 });
-        let wasOpened = false;
-        popup.on("open", () => {
-            wasOpened = true;
-            popup.setDOMContent(renderMarkerPopupContent(key));
-        });
-        popup.on("close", () => {
-            if (wasOpened) {
-                handleSave();
-                updateMarkerColor(key);
-            }
-        });
-        const marker = new mapboxgl.Marker({ color: defaultMarkerColor })
-            .setLngLat([lng, lat])
-            .setPopup(popup)
-            .addTo(mapRef.current);
-
-        const markerElement = marker.getElement();
-        markerElement.addEventListener("click", (ev) => {
-            ev.stopPropagation();
-            marker.togglePopup();
-        });
-        ["mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
-            markerElement.addEventListener(evt, (ev) => {
-                ev.stopPropagation();
+            const textarea = document.createElement("textarea");
+            textarea.className = "form-control";
+            textarea.rows = 3;
+            textarea.value = current?.notes ?? "";
+            textarea.addEventListener("input", (e) => {
+                const instance = markersRef.current.get(key);
+                if (instance) {
+                    instance.notes = (e.target as HTMLTextAreaElement).value;
+                }
             });
-        });
+            // prevent map interactions while typing
+            [
+                "click",
+                "mousedown",
+                "dblclick",
+                "touchstart",
+                "touchend",
+            ].forEach((evt) => {
+                textarea.addEventListener(evt, (ev) => ev.stopPropagation());
+            });
+            container.appendChild(textarea);
 
-        const originalHTML = markerElement.innerHTML;
-        markersRef.current.set(key, { mapMarker: marker, lat, lng, notes: "", done: false, originalHTML });
-        updateMarkerColor(key);
-        handleSave();
-    }, [renderMarkerPopupContent, handleSave, updateMarkerColor]);
+            const checkboxWrapper = document.createElement("div");
+            checkboxWrapper.className = "form-check mt-2";
 
-    const showAddConfirmPopup = useCallback((lat: number, lng: number) => {
-        if (!mapRef.current) return;
-        const container = document.createElement("div");
-        container.className = "d-flex flex-column";
-        const text = document.createElement("div");
-        text.textContent = "Marker hier hinzufügen?";
-        container.appendChild(text);
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.className = "form-check-input";
+            checkbox.id = `done-${key}`;
+            checkbox.checked = Boolean(current?.done);
+            checkbox.addEventListener("change", () => {
+                const instance = markersRef.current.get(key);
+                if (instance) {
+                    instance.done = checkbox.checked;
+                }
+            });
+            [
+                "click",
+                "mousedown",
+                "dblclick",
+                "touchstart",
+                "touchend",
+            ].forEach((evt) => {
+                checkbox.addEventListener(evt, (ev) => ev.stopPropagation());
+            });
 
-        const btns = document.createElement("div");
-        btns.className = "d-flex gap-2 mt-2";
+            const checkboxLabel = document.createElement("label");
+            checkboxLabel.className = "form-check-label";
+            checkboxLabel.htmlFor = `done-${key}`;
+            checkboxLabel.textContent = "Erledigt";
 
-        const confirmBtn = document.createElement("button");
-        confirmBtn.className = "btn btn-primary btn-sm";
-        confirmBtn.textContent = "Hinzufügen";
+            checkboxWrapper.appendChild(checkbox);
+            checkboxWrapper.appendChild(checkboxLabel);
+            container.appendChild(checkboxWrapper);
 
-        const cancelBtn = document.createElement("button");
-        cancelBtn.className = "btn btn-secondary btn-sm";
-        cancelBtn.textContent = "Abbrechen";
+            const button = document.createElement("button");
+            button.className = "btn btn-danger mt-2";
+            button.textContent = "Löschen";
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                removeMarker(key);
+                handleSave();
+            });
+            container.appendChild(button);
 
-        btns.appendChild(confirmBtn);
-        btns.appendChild(cancelBtn);
-        container.appendChild(btns);
+            return container;
+        },
+        [removeMarker, handleSave],
+    );
 
-        const popup = new mapboxgl.Popup({ offset: 12, closeOnClick: true })
-            .setLngLat([lng, lat])
-            .setDOMContent(container)
-            .addTo(mapRef.current);
+    const addMarker = useCallback(
+        (lat: number, lng: number) => {
+            const key = uuidv4();
+            if (!mapRef.current) return;
+            const popup = new mapboxgl.Popup({ offset: 16 });
+            let wasOpened = false;
+            popup.on("open", () => {
+                wasOpened = true;
+                popup.setDOMContent(renderMarkerPopupContent(key));
+            });
+            popup.on("close", () => {
+                if (wasOpened) {
+                    handleSave();
+                    updateMarkerColor(key);
+                }
+            });
+            const marker = new mapboxgl.Marker({ color: defaultMarkerColor })
+                .setLngLat([lng, lat])
+                .setPopup(popup)
+                .addTo(mapRef.current);
 
-        const stop = (ev: Event) => ev.stopPropagation();
-        ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
-            container.addEventListener(evt, stop);
-            confirmBtn.addEventListener(evt, stop);
-            cancelBtn.addEventListener(evt, stop);
-        });
+            const markerElement = marker.getElement();
+            markerElement.addEventListener("click", (ev) => {
+                ev.stopPropagation();
+                marker.togglePopup();
+            });
+            ["mousedown", "dblclick", "touchstart", "touchend"].forEach(
+                (evt) => {
+                    markerElement.addEventListener(evt, (ev) => {
+                        ev.stopPropagation();
+                    });
+                },
+            );
 
-        confirmBtn.addEventListener("click", () => {
-            popup.remove();
-            addMarker(lat, lng);
-        });
-        cancelBtn.addEventListener("click", () => {
-            popup.remove();
-        });
-    }, [addMarker]);
+            const originalHTML = markerElement.innerHTML;
+            markersRef.current.set(key, {
+                mapMarker: marker,
+                lat,
+                lng,
+                notes: "",
+                done: false,
+                originalHTML,
+            });
+            updateMarkerColor(key);
+            handleSave();
+        },
+        [renderMarkerPopupContent, handleSave, updateMarkerColor],
+    );
+
+    const showAddConfirmPopup = useCallback(
+        (lat: number, lng: number) => {
+            if (!mapRef.current) return;
+            const container = document.createElement("div");
+            container.className = "d-flex flex-column";
+            const text = document.createElement("div");
+            text.textContent = "Marker hier hinzufügen?";
+            container.appendChild(text);
+
+            const btns = document.createElement("div");
+            btns.className = "d-flex gap-2 mt-2";
+
+            const confirmBtn = document.createElement("button");
+            confirmBtn.className = "btn btn-primary btn-sm";
+            confirmBtn.textContent = "Hinzufügen";
+
+            const cancelBtn = document.createElement("button");
+            cancelBtn.className = "btn btn-secondary btn-sm";
+            cancelBtn.textContent = "Abbrechen";
+
+            btns.appendChild(confirmBtn);
+            btns.appendChild(cancelBtn);
+            container.appendChild(btns);
+
+            const popup = new mapboxgl.Popup({ offset: 12, closeOnClick: true })
+                .setLngLat([lng, lat])
+                .setDOMContent(container)
+                .addTo(mapRef.current);
+
+            const stop = (ev: Event) => ev.stopPropagation();
+            [
+                "click",
+                "mousedown",
+                "dblclick",
+                "touchstart",
+                "touchend",
+            ].forEach((evt) => {
+                container.addEventListener(evt, stop);
+                confirmBtn.addEventListener(evt, stop);
+                cancelBtn.addEventListener(evt, stop);
+            });
+
+            confirmBtn.addEventListener("click", () => {
+                popup.remove();
+                addMarker(lat, lng);
+            });
+            cancelBtn.addEventListener("click", () => {
+                popup.remove();
+            });
+        },
+        [addMarker],
+    );
 
     useEffect(() => {
         if (!mapContainerRef.current) return;
@@ -302,9 +357,13 @@ const MapComponent = ({index, district}: Props) => {
                     satelliteBtn.textContent = "Satellit";
                     const stop = (ev: Event) => ev.stopPropagation();
                     [container, streetsBtn, satelliteBtn].forEach((el) => {
-                        ["click", "mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) =>
-                            el.addEventListener(evt, stop),
-                        );
+                        [
+                            "click",
+                            "mousedown",
+                            "dblclick",
+                            "touchstart",
+                            "touchend",
+                        ].forEach((evt) => el.addEventListener(evt, stop));
                     });
 
                     const setActive = (styleName: "streets" | "satellite") => {
@@ -321,7 +380,9 @@ const MapComponent = ({index, district}: Props) => {
                     streetsBtn.addEventListener("click", () => {
                         if (currentStyle !== "streets") {
                             handleSave();
-                            mapInstance.setStyle("mapbox://styles/mapbox/streets-v11");
+                            mapInstance.setStyle(
+                                "mapbox://styles/mapbox/streets-v11",
+                            );
                             setActive("streets");
                         }
                     });
@@ -329,7 +390,9 @@ const MapComponent = ({index, district}: Props) => {
                     satelliteBtn.addEventListener("click", () => {
                         if (currentStyle !== "satellite") {
                             handleSave();
-                            mapInstance.setStyle("mapbox://styles/mapbox/satellite-streets-v12");
+                            mapInstance.setStyle(
+                                "mapbox://styles/mapbox/satellite-streets-v12",
+                            );
                             setActive("satellite");
                         }
                     });
@@ -355,9 +418,7 @@ const MapComponent = ({index, district}: Props) => {
             markersRef.current.forEach(({ mapMarker }) => mapMarker.remove());
             markersRef.current.clear();
             initialMarkers.forEach((value, key) => {
-                if (
-                    value
-                ) {
+                if (value) {
                     const popup = new mapboxgl.Popup({ offset: 16 });
                     let wasOpened = false;
                     popup.on("open", () => {
@@ -367,10 +428,12 @@ const MapComponent = ({index, district}: Props) => {
                     popup.on("close", () => {
                         if (wasOpened) {
                             handleSave();
-                            updateMarkerColor(key)
+                            updateMarkerColor(key);
                         }
                     });
-                    const marker = new mapboxgl.Marker({ color: (value.done ? notesColor : defaultMarkerColor) })
+                    const marker = new mapboxgl.Marker({
+                        color: value.done ? notesColor : defaultMarkerColor,
+                    })
                         .setLngLat([value.lng, value.lat])
                         .setPopup(popup)
                         .addTo(map);
@@ -380,11 +443,13 @@ const MapComponent = ({index, district}: Props) => {
                         ev.stopPropagation();
                         marker.togglePopup();
                     });
-                    ["mousedown", "dblclick", "touchstart", "touchend"].forEach((evt) => {
-                        markerElement.addEventListener(evt, (ev) => {
-                            ev.stopPropagation();
-                        });
-                    });
+                    ["mousedown", "dblclick", "touchstart", "touchend"].forEach(
+                        (evt) => {
+                            markerElement.addEventListener(evt, (ev) => {
+                                ev.stopPropagation();
+                            });
+                        },
+                    );
 
                     const originalHTML = markerElement.innerHTML;
                     markersRef.current.set(key, {
@@ -411,8 +476,14 @@ const MapComponent = ({index, district}: Props) => {
                     }
                 } else {
                     const bounds = new mapboxgl.LngLatBounds();
-                    renderedMarkers.forEach((m) => bounds.extend([m.lng, m.lat]));
-                    map.fitBounds(bounds, { padding: 60, maxZoom: 18, duration: 500 });
+                    renderedMarkers.forEach((m) =>
+                        bounds.extend([m.lng, m.lat]),
+                    );
+                    map.fitBounds(bounds, {
+                        padding: 60,
+                        maxZoom: 18,
+                        duration: 500,
+                    });
                 }
             }
         });
@@ -421,7 +492,11 @@ const MapComponent = ({index, district}: Props) => {
             // Ignore clicks originating from markers or popups
             const target = (e.originalEvent as MouseEvent | TouchEvent)
                 .target as HTMLElement | null;
-            if (target && (target.closest(".mapboxgl-marker") || target.closest(".mapboxgl-popup"))) {
+            if (
+                target &&
+                (target.closest(".mapboxgl-marker") ||
+                    target.closest(".mapboxgl-popup"))
+            ) {
                 return;
             }
             showAddConfirmPopup(e.lngLat.lat, e.lngLat.lng);
@@ -434,7 +509,16 @@ const MapComponent = ({index, district}: Props) => {
             map.remove();
             mapRef.current = null;
         };
-    }, [addMarker, centerLngLat, initialMarkers, renderMarkerPopupContent, handleSave, updateMarkerColor, showAddConfirmPopup, district]);
+    }, [
+        addMarker,
+        centerLngLat,
+        initialMarkers,
+        renderMarkerPopupContent,
+        handleSave,
+        updateMarkerColor,
+        showAddConfirmPopup,
+        district,
+    ]);
 
     return (
         <div className={"map-wrapper mb-3 h-100"}>

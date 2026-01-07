@@ -1,5 +1,5 @@
-import {DistrictStatusText} from "src/requests/adminStore";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { DistrictStatusText } from "src/requests/adminStore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faCalculator,
     faCircleCheck,
@@ -7,8 +7,8 @@ import {
     faUsers,
     faUsersSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import React, {useMemo} from "react";
-import {SizeProp} from "@fortawesome/fontawesome-svg-core";
+import React, { useMemo } from "react";
+import { SizeProp } from "@fortawesome/fontawesome-svg-core";
 
 interface Props {
     status: DistrictStatusText | undefined;
@@ -16,8 +16,7 @@ interface Props {
     size?: SizeProp;
 }
 
-const StatusIcon = ({ status, colored = true, size = "lg"}: Props) => {
-
+const StatusIcon = ({ status, colored = true, size = "lg" }: Props) => {
     const icon = useMemo(() => {
         switch (status) {
             case DistrictStatusText.planned:
@@ -29,23 +28,28 @@ const StatusIcon = ({ status, colored = true, size = "lg"}: Props) => {
             case DistrictStatusText.calculating:
                 return faCalculator;
             default:
-                return  faUsersSlash;
+                return faUsersSlash;
         }
     }, [status]);
 
     const color = useMemo(() => {
         switch (status) {
             case DistrictStatusText.finished:
-                return 'var(--bs-success)';
+                return "var(--bs-success)";
             case DistrictStatusText.notPlanned:
             case undefined:
-                return 'var(--bs-danger)';
+                return "var(--bs-danger)";
         }
     }, [status]);
 
     return (
         <div className={`status-icon`}>
-            <FontAwesomeIcon style={{aspectRatio: 1}} color={colored ? color : undefined} size={size} icon={icon} />
+            <FontAwesomeIcon
+                style={{ aspectRatio: 1 }}
+                color={colored ? color : undefined}
+                size={size}
+                icon={icon}
+            />
         </div>
     );
 };

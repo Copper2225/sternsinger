@@ -60,4 +60,4 @@ export const districtsState = atom<District[]>({
 export const authState = atom<boolean>({
     key: "auth",
     default: false,
-})
+});

@@ -1,7 +1,13 @@
 import { District, DistrictStatusText } from "src/requests/adminStore";
-import {Button, Modal, ModalBody, ModalHeader, ModalTitle} from "react-bootstrap";
+import {
+    Button,
+    Modal,
+    ModalBody,
+    ModalHeader,
+    ModalTitle,
+} from "react-bootstrap";
 import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
-import React, {Dispatch, SetStateAction, useCallback} from "react";
+import React, { Dispatch, SetStateAction, useCallback } from "react";
 
 interface Props {
     district: District | undefined;
@@ -9,7 +15,7 @@ interface Props {
     setDistricts: Dispatch<SetStateAction<District[]>>;
     setSelectedDistrict: (district: District) => void;
     setShow: Dispatch<SetStateAction<boolean>>;
-    show: boolean
+    show: boolean;
 }
 
 const StatusModal = ({
@@ -35,10 +41,7 @@ const StatusModal = ({
                 })
                     .then((response) => response.json())
                     .then((data) =>
-                        console.log(
-                            `Updated district ${index + 1}`,
-                            data,
-                        ),
+                        console.log(`Updated district ${index + 1}`, data),
                     )
                     .catch((error) =>
                         console.error("Error updating district:", error),
@@ -59,9 +62,15 @@ const StatusModal = ({
             }
             setShow(false);
         },
-        [backendURL, district, index, setDistricts, setSelectedDistrict, setShow],
+        [
+            backendURL,
+            district,
+            index,
+            setDistricts,
+            setSelectedDistrict,
+            setShow,
+        ],
     );
-
 
     return (
         <Modal show={show} onHide={() => setShow(false)} centered>
@@ -94,7 +103,6 @@ const StatusModal = ({
                     </div>
                 )}
             </ModalBody>
-
         </Modal>
     );
 };

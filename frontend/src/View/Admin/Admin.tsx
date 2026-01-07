@@ -6,6 +6,7 @@ import { useLoadDistricts } from "src/requests/useLoadDistricts";
 import ImportButton from "src/View/Admin/ImportButton";
 import ExportButton from "src/View/Admin/ExportButton";
 import { FormCheck } from "react-bootstrap";
+import DistrictPasscodes from "src/View/Admin/DistrictPasscodes";
 
 const Admin: React.FC = () => {
     const loadDistricts = useLoadDistricts();
@@ -17,6 +18,7 @@ const Admin: React.FC = () => {
         (values: District[]) => {
             fetch(`${backendURL}/districts`, {
                 method: "POST",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ value: values }),
             })
@@ -62,6 +64,7 @@ const Admin: React.FC = () => {
             fetch(`${backendURL}/district`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ index, value }),
             })
                 .then((response) => response.json())
@@ -101,6 +104,7 @@ const Admin: React.FC = () => {
                 <div style={{ display: "flex", gap: 10 }}>
                     <ImportButton setState={handleOverwrite} />
                     <ExportButton values={districts} name={"districts.json"} />
+                    <DistrictPasscodes districts={districts} />
                     <FormCheck
                         className={"text-center align-content-center"}
                         type={"switch"}

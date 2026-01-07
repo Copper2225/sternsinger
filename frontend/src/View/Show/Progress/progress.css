@@ -134,7 +134,6 @@
 
 /* Landscape mobile styles */
 @media screen and (max-height: 300px) {
-
     .progress-wrapper {
         font-size: 10px;
     }

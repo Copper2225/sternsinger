@@ -18,9 +18,23 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                 <Routes>
                     <Route path="/show" element={<App />} />
                     <Route path="/" element={<TeamLeader />} />
-                    <Route path="/admin" element={<AdminGate><Admin /></AdminGate>} />
+                    <Route
+                        path="/admin"
+                        element={
+                            <AdminGate>
+                                <Admin />
+                            </AdminGate>
+                        }
+                    />
                     <Route path="/help" element={<Help />} />
-                    <Route path="/map" element={<AdminGate><OverviewMap /></AdminGate>} />
+                    <Route
+                        path="/map"
+                        element={
+                            <AdminGate>
+                                <OverviewMap />
+                            </AdminGate>
+                        }
+                    />
                 </Routes>
             </BrowserRouter>
         </RecoilRoot>

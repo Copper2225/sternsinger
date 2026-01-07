@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faXmark} from "@fortawesome/free-solid-svg-icons";
-import {District, DistrictStatusText} from "src/requests/adminStore";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { District, DistrictStatusText } from "src/requests/adminStore";
 import StatusIcon from "src/View/Show/DIstrictStatus/StatusIcon";
-import {Button, OverlayTrigger, Tooltip, TooltipProps} from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip, TooltipProps } from "react-bootstrap";
 import StatusChangeModal from "src/View/Admin/StatusChangeModal";
 
 interface Props {
@@ -53,18 +53,19 @@ const DistrictLine = ({
 
     const buttonVariant = useMemo(() => {
         switch (district.status) {
-            case DistrictStatusText.finished :
+            case DistrictStatusText.finished:
                 return "success";
-            case DistrictStatusText.planned :
+            case DistrictStatusText.planned:
                 return "warning";
-            case DistrictStatusText.walking :
+            case DistrictStatusText.walking:
                 return "primary";
-            case DistrictStatusText.calculating :
+            case DistrictStatusText.calculating:
                 return "secondary";
-            case DistrictStatusText.notPlanned :
-            default: return "danger";
+            case DistrictStatusText.notPlanned:
+            default:
+                return "danger";
         }
-    }, [district.status])
+    }, [district.status]);
 
     const contactTooltip = (props: TooltipProps) => (
         <Tooltip id="button-tooltip" {...props}>
@@ -75,7 +76,11 @@ const DistrictLine = ({
     return (
         <tr style={{ height: "10px" }}>
             <td style={{ padding: "10px 0" }}>
-                <Button variant={buttonVariant} style={{width: "3.4em"}} onClick={() => setShowModal(true)}>
+                <Button
+                    variant={buttonVariant}
+                    style={{ width: "3.4em" }}
+                    onClick={() => setShowModal(true)}
+                >
                     <StatusIcon colored={false} status={district.status} />
                 </Button>
             </td>
@@ -84,7 +89,11 @@ const DistrictLine = ({
                     placement="top"
                     delay={{ show: 250, hide: 400 }}
                     overlay={contactTooltip}
-                ><label style={{ fontSize: "larger" }}>{district.name}:</label></OverlayTrigger>
+                >
+                    <label style={{ fontSize: "larger" }}>
+                        {district.name}:
+                    </label>
+                </OverlayTrigger>
             </td>
             <td style={{ padding: "10px 0", width: "200px" }}>
                 <input
@@ -117,7 +126,13 @@ const DistrictLine = ({
                     </div>
                 )}
             </td>
-            <StatusChangeModal district={district} showModal={showModal} setShowModal={setShowModal} handleSubmit={handleSubmit} index={index} />
+            <StatusChangeModal
+                district={district}
+                showModal={showModal}
+                setShowModal={setShowModal}
+                handleSubmit={handleSubmit}
+                index={index}
+            />
         </tr>
     );
 };

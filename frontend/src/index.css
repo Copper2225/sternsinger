@@ -103,7 +103,7 @@ button:focus-visible {
     height: 100svh;
     position: sticky;
     top: 0;
-    aspect-Ratio: 16 / 9;
+    aspect-ratio: 16 / 9;
 
     iframe {
         max-height: 768px;

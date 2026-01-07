@@ -29,8 +29,9 @@ const ImportButton = ({ setState }: Props): React.ReactElement => {
                         ...district,
                         bauernschaft: district.bauernschaft ?? false,
                         counting: district.counting ?? true,
-                        status: district.status ?? DistrictStatusText.notPlanned,
-                        markers: district.markers ?? undefined
+                        status:
+                            district.status ?? DistrictStatusText.notPlanned,
+                        markers: district.markers ?? undefined,
                     }));
 
                     setState(processedData);
