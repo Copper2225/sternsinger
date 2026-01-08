@@ -29,6 +29,7 @@
 }
 
 .status-wrapper {
+    font-size: 14px;
     margin-bottom: 2em;
     padding-inline: 3em;
     display: flex;
@@ -104,7 +105,7 @@
 /* Landscape mobile styles */
 @media screen and (orientation: landscape) and (min-width: 2500px) {
     .status-wrapper {
-        font-size: 17px;
+        font-size: 12px;
     }
 
     .status-grid {

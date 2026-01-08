@@ -28,9 +28,9 @@ const DistrictStatus = ({ districts }: Props): ReactElement => {
     const getBaseRows = (width: number, height: number) => {
         if (height < 500) return 3;
         if (height < 700) return 5;
-        if (width > 2500) return 5;
-        if (width > 1900) return 6;
-        if (width > 1200) return 7;
+        if (width > 2500) return 6;
+        if (width > 1900) return 7;
+        if (width > 1200) return 8;
         if (width > 800) return 10;
         return 15;
     };

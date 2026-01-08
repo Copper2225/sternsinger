@@ -24,7 +24,6 @@ import "./teamLeader.css";
 import Cookies from "js-cookie";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faExpand,
     faFilm,
     faMaximize,
     faMinimize,
@@ -89,6 +88,7 @@ const TeamLeader = () => {
                 console.error("Error fetching districts:", error),
             );
         setShowMap(Cookies.get("showMap") === "true");
+        setMapFullscreen(Cookies.get("fullscreen") === "true");
     }, [backendURL, checkDistrictAuth, loadDistricts, setDistricts]);
 
     const handleDistrictLogin = async () => {
@@ -166,8 +166,17 @@ const TeamLeader = () => {
         (event: ChangeEvent<HTMLInputElement>) => {
             setShowMap(event.target.checked);
             Cookies.set("showMap", event.target.checked.toString());
+            Cookies.set("fullscreen", mapFullscreen.toString());
         },
-        [],
+        [mapFullscreen],
+    );
+
+    const handleFullscreenToggle = useCallback(
+        () => {
+            setMapFullscreen(prevState => !prevState);
+            Cookies.set("fullscreen", (!mapFullscreen).toString());
+        },
+        [mapFullscreen],
     );
 
     const handleReset = useCallback(() => {
@@ -192,7 +201,7 @@ const TeamLeader = () => {
                 }}
             />
 
-            {!mapFullscreen && (
+            {(!mapFullscreen || !showMap) && (
                 <>
                     <div className={"d-flex gap-3"}>
                         <Button
@@ -274,7 +283,7 @@ const TeamLeader = () => {
                                 />
                             </div>
                             {showMap && (
-                                <Button onClick={() => setMapFullscreen(!mapFullscreen)}>
+                                <Button onClick={handleFullscreenToggle}>
                                     <FontAwesomeIcon
                                         icon={
                                             mapFullscreen

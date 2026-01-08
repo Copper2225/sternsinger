@@ -32,15 +32,17 @@ interface Bauernschaft {
 
 export const dorfBezirkeState = atom<number>({
     key: "dorfBezirke",
-    default: 20,
+    default: 29,
 });
 
 export const bauernschaftenState = atom<Bauernschaft[]>({
     key: "bauernschaften",
     default: [
-        { name: "Brock", amount: 3 },
+        { name: "Brock", amount: 2 },
+        { name: "Loburg", amount: 2 },
         { name: "Schirl", amount: 3 },
         { name: "Überwasser", amount: 1 },
+        { name: "Eichendorff", amount: 1 },
     ],
 });
 
