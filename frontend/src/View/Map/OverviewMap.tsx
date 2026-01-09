@@ -499,7 +499,6 @@ const OverviewMap = () => {
                     });
                     popup.on("close", () => {
                         if (wasOpened) {
-                            // handleSave();
                             updateMarkerColor(key);
                         }
                     });
@@ -536,13 +535,12 @@ const OverviewMap = () => {
                     updateMarkerColor(key);
                 }
             });
-            // After rendering all existing markers, fit the map to show all of them
+
             const renderedMarkers = Array.from(markersRef.current.values());
             if (renderedMarkers.length > 0) {
                 if (renderedMarkers.length === 1) {
                     const only = renderedMarkers[0];
                     map.setCenter([only.lng, only.lat]);
-                    // Keep current zoom if it's already close; otherwise zoom in moderately
                     const currentZoom = map.getZoom();
                     if (currentZoom < 16) {
                         map.setZoom(16);
@@ -562,7 +560,6 @@ const OverviewMap = () => {
         });
 
         map.on("click", (e) => {
-            // Ignore clicks originating from markers or popups
             const target = (e.originalEvent as MouseEvent | TouchEvent)
                 .target as HTMLElement | null;
             if (
@@ -576,9 +573,7 @@ const OverviewMap = () => {
         });
 
         return () => {
-            // Remove all existing markers and clear local state on teardown
             markersRef.current.forEach(({ mapMarker }) => mapMarker.remove());
-            // eslint-disable-next-line react-hooks/exhaustive-deps
             markersRef.current.clear();
             map.remove();
             mapRef.current = null;
