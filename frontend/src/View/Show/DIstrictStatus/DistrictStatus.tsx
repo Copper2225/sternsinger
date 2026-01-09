@@ -30,8 +30,8 @@ const DistrictStatus = ({ districts }: Props): ReactElement => {
         if (height < 700) return 5;
         if (width > 2500) return 6;
         if (width > 1900) return 8;
-        if (width > 1200) return 9;
-        if (width > 800) return 10;
+        if (width > 1200) return 10;
+        if (width > 800) return 12;
         return 15;
     };
 

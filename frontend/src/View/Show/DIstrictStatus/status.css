@@ -10,8 +10,7 @@
 
 .status-title {
     margin-top: 10px;
-    font-size: 7em;
-    margin-bottom: 25px;
+    font-size: 8em;
     text-align: center;
 }
 
@@ -29,7 +28,7 @@
 }
 
 .status-wrapper {
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 2em;
     padding-inline: 3em;
     display: flex;
@@ -39,7 +38,7 @@
 /* Landscape mobile styles */
 @media screen and (orientation: landscape) and (max-height: 950px) {
     .status-wrapper {
-        font-size: 14px;
+        font-size: 10px;
     }
 
     .status-title {
