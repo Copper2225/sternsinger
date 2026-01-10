@@ -42,7 +42,7 @@ const Progress = ({ districts }: Props): React.ReactElement => {
         (filterFn: (district: District) => boolean): Part => {
             const filteredDistricts = districts.filter(filterFn);
             return {
-                value: filteredDistricts.filter((d) => (d.money ?? 0) > 0)
+                value: filteredDistricts.filter((d) => (d.status === "finished"))
                     .length,
                 total: filteredDistricts.length,
             };
