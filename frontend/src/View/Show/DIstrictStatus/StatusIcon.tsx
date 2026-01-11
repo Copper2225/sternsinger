@@ -1,7 +1,7 @@
 import { DistrictStatusText } from "src/requests/adminStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faCalculator,
+    faCalculator, faCar,
     faCircleCheck,
     faPersonWalking,
     faUsers,
@@ -12,11 +12,12 @@ import { SizeProp } from "@fortawesome/fontawesome-svg-core";
 
 interface Props {
     status: DistrictStatusText | undefined;
+    bauernschaft?: boolean;
     colored?: boolean;
     size?: SizeProp;
 }
 
-const StatusIcon = ({ status, colored = true, size = "lg" }: Props) => {
+const StatusIcon = ({ status, colored = true, bauernschaft = false, size = "lg" }: Props) => {
     const icon = useMemo(() => {
         switch (status) {
             case DistrictStatusText.planned:
@@ -24,13 +25,13 @@ const StatusIcon = ({ status, colored = true, size = "lg" }: Props) => {
             case DistrictStatusText.finished:
                 return faCircleCheck;
             case DistrictStatusText.walking:
-                return faPersonWalking;
+                return bauernschaft ? faCar : faPersonWalking;
             case DistrictStatusText.calculating:
                 return faCalculator;
             default:
                 return faUsersSlash;
         }
-    }, [status]);
+    }, [bauernschaft, status]);
 
     const color = useMemo(() => {
         switch (status) {

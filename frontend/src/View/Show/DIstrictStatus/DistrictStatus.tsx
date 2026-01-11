@@ -58,7 +58,7 @@ const DistrictStatus = ({ districts }: Props): ReactElement => {
                                 "d-flex flex-row align-items-center status-item"
                             }
                         >
-                            <StatusIcon status={district.status} />
+                            <StatusIcon status={district.status} bauernschaft={district.bauernschaft}/>
                             <div className={""}>{district.name}</div>
                         </div>
                     ))}
