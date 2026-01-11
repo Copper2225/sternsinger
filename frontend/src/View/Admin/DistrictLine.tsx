@@ -23,8 +23,13 @@ const DistrictLine = ({
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        setInputValue(district.money ?? "");
+        setInputValue(
+            district.money !== undefined
+                ? Number(district.money.toFixed(2))
+                : ""
+        );
     }, [district]);
+
 
     const handleSave = useCallback(() => {
         handleSubmit(
