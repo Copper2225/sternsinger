@@ -35,12 +35,16 @@ const DistrictLine = ({
         handleSubmit(
             {
                 ...district,
-                money: inputValue != "" ? inputValue : undefined,
+                money:
+                    inputValue !== ""
+                        ? Number(inputValue.toFixed(2))
+                        : undefined,
                 status: DistrictStatusText.finished,
             },
             index,
         );
     }, [district, handleSubmit, index, inputValue]);
+
 
     const handleCancel = useCallback(() => {
         setInputValue(district.money ?? "");
@@ -103,15 +107,22 @@ const DistrictLine = ({
             <td style={{ padding: "10px 0", width: "200px" }}>
                 <input
                     type="number"
+                    step="0.01"
                     value={inputValue}
                     onChange={(e) =>
                         setInputValue(
                             e.target.value === "" ? "" : Number(e.target.value),
                         )
                     }
+                    onBlur={() => {
+                        if (inputValue !== "") {
+                            setInputValue(Number(inputValue.toFixed(2)));
+                        }
+                    }}
                     style={{ padding: "5px", width: "100%" }}
                     onKeyDown={handleKeyDown}
                 />
+
             </td>
             <td style={{ padding: "10px", minWidth: "80px" }}>
                 {inputValue !== (district.money ?? "") && (
