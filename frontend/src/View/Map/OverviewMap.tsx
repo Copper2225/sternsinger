@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { DistrictMarker, districtsState } from "src/requests/adminStore";
 import { useRecoilState } from "recoil";
 import { useDistrictColor } from "src/View/Map/useDistrictColor";
+import { Button } from "react-bootstrap";
 
 interface OverviewMarker extends DistrictMarker {
     district: string;
@@ -574,6 +575,7 @@ const OverviewMap = () => {
 
         return () => {
             markersRef.current.forEach(({ mapMarker }) => mapMarker.remove());
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             markersRef.current.clear();
             map.remove();
             mapRef.current = null;
@@ -587,10 +589,51 @@ const OverviewMap = () => {
         updateMarkerColor,
         showAddConfirmPopup,
     ]);
+    
+    const handleReset = useCallback(async () => {
+        const updatedDistricts = districts.map((d) => {
+            const markers = d.markers || {};
+            const updatedMarkers: Record<string, DistrictMarker> = {};
+
+            if (markers instanceof Map) {
+                for (const [key, value] of markers) {
+                    updatedMarkers[key] = { ...value, done: false };
+                }
+            } else {
+                Object.keys(markers).forEach((key) => {
+                    updatedMarkers[key] = {
+                        ...markers[key],
+                        done: false,
+                    };
+                });
+            }
+            return { ...d, markers: updatedMarkers };
+        });
+
+        setDistricts(updatedDistricts);
+
+        try {
+            await fetch(`${backendURL}/districts`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ value: updatedDistricts }),
+            });
+        } catch (error) {
+            console.error("Error resetting markers:", error);
+        }
+    }, [districts, setDistricts, backendURL]);
 
     return (
         <>
-            <h3 className={"py-2"}>Karte</h3>
+            <div className={"d-flex justify-content-between"}>
+                <h3 className={"py-2"}>Karte</h3>
+                <Button className={"m-2"} onClick={handleReset}>
+                    Reset Done
+                </Button>
+            </div>
+
             <div className={"map-wrapper mb-3 h-100"}>
                 <div
                     ref={mapContainerRef}
