@@ -13,24 +13,29 @@ interface Props {
 }
 
 const DistrictLine = ({
-    district,
-    handleSubmit,
-    index,
-}: Props): React.ReactElement => {
-    const [inputValue, setInputValue] = useState<number | "">(
-        district.money ?? "",
-    );
+                          district,
+                          handleSubmit,
+                          index,
+                      }: Props): React.ReactElement => {
+    const [inputValue, setInputValue] = useState<string>("");
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        setInputValue(district.money ?? "");
+        setInputValue(
+            district.money !== undefined
+                ? district.money.toFixed(2)
+                : ""
+        );
     }, [district]);
 
     const handleSave = useCallback(() => {
         handleSubmit(
             {
                 ...district,
-                money: inputValue != "" ? inputValue : undefined,
+                money:
+                    inputValue !== ""
+                        ? Number(Number(inputValue).toFixed(2))
+                        : undefined,
                 status: DistrictStatusText.finished,
             },
             index,
@@ -38,7 +43,11 @@ const DistrictLine = ({
     }, [district, handleSubmit, index, inputValue]);
 
     const handleCancel = useCallback(() => {
-        setInputValue(district.money ?? "");
+        setInputValue(
+            district.money !== undefined
+                ? district.money.toFixed(2)
+                : ""
+        );
     }, [district.money]);
 
     const handleKeyDown = useCallback(
@@ -84,6 +93,7 @@ const DistrictLine = ({
                     <StatusIcon colored={false} status={district.status} />
                 </Button>
             </td>
+
             <td style={{ padding: "10px 5px" }}>
                 <OverlayTrigger
                     placement="top"
@@ -95,37 +105,53 @@ const DistrictLine = ({
                     </label>
                 </OverlayTrigger>
             </td>
+
             <td style={{ padding: "10px 0", width: "200px" }}>
                 <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
                     value={inputValue}
-                    onChange={(e) =>
-                        setInputValue(
-                            e.target.value === "" ? "" : Number(e.target.value),
-                        )
-                    }
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        // allow digits and one decimal point
+                        if (/^\d*\.?\d*$/.test(value)) {
+                            setInputValue(value);
+                        }
+                    }}
+                    onBlur={() => {
+                        if (inputValue !== "") {
+                            setInputValue(
+                                Number(inputValue).toFixed(2),
+                            );
+                        }
+                    }}
                     style={{ padding: "5px", width: "100%" }}
                     onKeyDown={handleKeyDown}
                 />
             </td>
+
             <td style={{ padding: "10px", minWidth: "80px" }}>
-                {inputValue !== (district.money ?? "") && (
-                    <div style={{ display: "flex", gap: 8 }}>
-                        <FontAwesomeIcon
-                            size={"xl"}
-                            className={"text-success"}
-                            icon={faCheck}
-                            onClick={handleSave}
-                        />
-                        <FontAwesomeIcon
-                            size={"xl"}
-                            className={"text-danger"}
-                            icon={faXmark}
-                            onClick={handleCancel}
-                        />
-                    </div>
-                )}
+                {inputValue !==
+                    (district.money !== undefined
+                        ? district.money.toFixed(2)
+                        : "") && (
+                        <div style={{ display: "flex", gap: 8 }}>
+                            <FontAwesomeIcon
+                                size="xl"
+                                className="text-success"
+                                icon={faCheck}
+                                onClick={handleSave}
+                            />
+                            <FontAwesomeIcon
+                                size="xl"
+                                className="text-danger"
+                                icon={faXmark}
+                                onClick={handleCancel}
+                            />
+                        </div>
+                    )}
             </td>
+
             <StatusChangeModal
                 district={district}
                 showModal={showModal}
