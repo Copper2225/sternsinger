@@ -92,27 +92,60 @@ const OverviewMap = () => {
     const updateMarkerColor = useCallback(
         (key: string) => {
             const current = markersRef.current.get(key);
-            if (current) {
+            if (current && mapRef.current) {
                 const el = current.mapMarker.getElement();
+                const zoom = mapRef.current.getZoom();
+                const baseZoom = 14.6;
+                const scale = Math.max(
+                    0.4,
+                    Math.min(1.2, Math.pow(2, zoom - baseZoom)),
+                );
+
+                // We want to scale an inner container so Mapbox's transform on the outer element is not interfered with
+                let contentWrapper = el.querySelector(
+                    ".marker-content-wrapper",
+                ) as HTMLDivElement | null;
+                if (!contentWrapper) {
+                    contentWrapper = document.createElement("div");
+                    contentWrapper.className = "marker-content-wrapper";
+                    contentWrapper.style.display = "flex";
+                    contentWrapper.style.alignItems = "center";
+                    contentWrapper.style.justifyContent = "center";
+                    contentWrapper.style.width = "100%";
+                    contentWrapper.style.height = "100%";
+
+                    // Move existing children to wrapper
+                    while (el.firstChild) {
+                        contentWrapper.appendChild(el.firstChild);
+                    }
+                    el.appendChild(contentWrapper);
+                }
+
+                contentWrapper.style.transform = `scale(${scale})`;
 
                 if (current.done) {
                     const doneMarkerElement = createDoneMarkerElement();
                     // Replace inner content with the "done" badge while keeping the outer marker element and listeners
-                    el.innerHTML = "";
-                    el.appendChild(doneMarkerElement);
+                    contentWrapper.innerHTML = "";
+                    contentWrapper.appendChild(doneMarkerElement);
                 } else {
                     // Restore original default marker HTML and then recolor based on notes
                     if (current.originalHTML) {
-                        el.innerHTML = current.originalHTML;
+                        if (
+                            contentWrapper.innerHTML !== current.originalHTML ||
+                            contentWrapper.querySelector("svg") === null
+                        ) {
+                            contentWrapper.innerHTML = current.originalHTML;
+                        }
                     }
-                    const path = el?.querySelector?.(
+                    const path = contentWrapper?.querySelector?.(
                         "path",
                     ) as SVGPathElement | null;
                     if (path) {
                         const newFill = getMarkerColor(current.district);
                         path.setAttribute("fill", newFill);
                     }
-                    const circle = el?.querySelector?.(
+                    const circle = contentWrapper?.querySelector?.(
                         "circle",
                     ) as SVGPathElement | null;
                     if (circle) {
@@ -573,7 +606,18 @@ const OverviewMap = () => {
             showAddConfirmPopup(e.lngLat.lat, e.lngLat.lng);
         });
 
+        const updateAllMarkersScale = () => {
+            markersRef.current.forEach((_, key) => {
+                updateMarkerColor(key);
+            });
+        };
+
+        map.on("zoom", updateAllMarkersScale);
+        map.on("move", updateAllMarkersScale);
+
         return () => {
+            map.off("zoom", updateAllMarkersScale);
+            map.off("move", updateAllMarkersScale);
             markersRef.current.forEach(({ mapMarker }) => mapMarker.remove());
             // eslint-disable-next-line react-hooks/exhaustive-deps
             markersRef.current.clear();
@@ -615,6 +659,7 @@ const OverviewMap = () => {
         try {
             await fetch(`${backendURL}/districts`, {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
