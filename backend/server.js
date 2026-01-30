@@ -20,7 +20,7 @@ app.use(cookieParser(process.env.SECRET));
 let districtValues = [];
 let districtSecrets = [];
 
-const forceAllow = true;
+const forceAllow = false;
 
 const log = [];
 
