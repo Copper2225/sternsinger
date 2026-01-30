@@ -46,7 +46,7 @@ const TeamLeader = () => {
     const [mapFullscreen, setMapFullscreen] = useState(false);
     const [statusModal, setStatusModal] = useState(false);
     const [buttonTimeout, setButtonTimeout] = useState<boolean>();
-    const [needsDistrictAuth, setNeedsDistrictAuth] = useState(false);
+    const [needsDistrictAuth, setNeedsDistrictAuth] = useState(true);
     const [districtPasscode, setDistrictPasscode] = useState("");
     const backendURL = import.meta.env.VITE_BACKEND_URL;
     const [showMap, setShowMap] = useState<boolean>(false);
