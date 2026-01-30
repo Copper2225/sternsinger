@@ -19,7 +19,7 @@ export function useDistrictColor() {
             case 4:
                 return "#f58231"; // orange
             case 5:
-                return "#911eb4"; // purple
+                return "#e6beff"; // lavender
             case 6:
                 return "#46f0f0"; // cyan
             case 7:
@@ -31,7 +31,7 @@ export function useDistrictColor() {
             case 10:
                 return "#008080"; // teal
             case 11:
-                return "#e6beff"; // lavender
+                return "#911eb4"; // purple
             case 12:
                 return "#9a6324"; // brown
             case 13:
