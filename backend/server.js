@@ -22,6 +22,10 @@ let districtSecrets = [];
 
 const forceAllow = false;
 
+const healthCors = cors({
+  origin: process.env.DASHBOARD_URL,
+});
+
 const log = [];
 
 // Use the environment variable or default to 3000 if not set
@@ -223,5 +227,9 @@ app.get("/district-passcodes", (req, res) => {
   const passcodes = districtSecrets.map((s) => s.plain);
 
   res.json({ success: true, passcodes });
+});
+
+app.get('/health', healthCors, (_req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
